@@ -3,66 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Get RAVA - Free Download</title>
+  <title>Get RAVA Free</title>
   <style>
     body {
       font-family: Arial, sans-serif;
       background: #f9f9f9;
-      padding: 0;
-      margin: 0;
+      padding: 40px;
     }
-    .container {
+    .form-container {
       max-width: 500px;
-      margin: 50px auto;
+      margin: auto;
       background: #fff;
-      padding: 30px;
+      padding: 20px;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    h2 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    label {
-      font-weight: bold;
-      display: block;
-      margin-top: 15px;
-    }
-    input[type="text"], input[type="email"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border: 1px solid #ddd;
-      border-radius: 5px;
+    h2 { text-align: center; }
+    label { display: block; margin-top: 10px; }
+    input {
+      width: 100%; padding: 10px; margin-top: 5px;
+      border: 1px solid #ccc; border-radius: 5px;
     }
     button {
       margin-top: 20px;
-      background: #2b2d42;
-      color: white;
-      padding: 12px;
       width: 100%;
+      padding: 12px;
+      background: #2b2d42;
+      color: #fff;
       border: none;
       border-radius: 5px;
       font-size: 16px;
       cursor: pointer;
     }
-    button:hover {
-      background: #414567;
-    }
+    button:hover { background: #414567; }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Get RAVA (Free for Practice Account)</h2>
-    <form action="thankyou.html" method="get">
-      <label for="name">Full Name</label>
+  <div class="form-container">
+    <h2>Get RAVA Free</h2>
+    <p>Fill in your details below to download RAVA. You’ll get the Practice version for free.  
+    Upgrade anytime to unlock Real Account trading for <strong>$1500/month</strong>.</p>
+
+    <form id="ravaForm" action="https://formspree.io/f/xjkoqbpz" method="POST">
+      <label for="name">Name:</label>
       <input type="text" id="name" name="name" required>
-
-      <label for="email">Email Address</label>
+      
+      <label for="email">Email:</label>
       <input type="email" id="email" name="email" required>
-
-      <button type="submit">Submit & Download</button>
+      
+      <button type="submit">Submit & Continue</button>
     </form>
   </div>
+
+  <script>
+    // Handle form submit manually for guaranteed redirect
+    const form = document.getElementById('ravaForm');
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault(); // stop normal form submit
+
+      const formData = new FormData(form);
+      try {
+        let res = await fetch(form.action, {
+          method: form.method,
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+        if (res.ok) {
+          // ✅ Always redirect on success
+          window.location.href = "thankyou.html";
+        } else {
+          alert("Oops! Something went wrong submitting the form.");
+        }
+      } catch (err) {
+        alert("Network error. Try again later.");
+      }
+    });
+  </script>
 </body>
 </html>
