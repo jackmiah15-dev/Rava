@@ -1,223 +1,181 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RAVA Auto Trader</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Garamond&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: 'Garamond', serif;
-      background: #f8f6f1 url('https://www.transparenttextures.com/patterns/paper-fibers.png');
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
       margin: 0;
       padding: 0;
-      color: #2a2a2a;
-      line-height: 1.75;
+      color: #333;
     }
 
     header {
-      background: #101413;
-      color: #d4af37;
-      padding: 25px 50px;
+      background: #2b2d42;
+      color: #fff;
+      padding: 20px 40px;
       display: flex;
       align-items: center;
-      gap: 20px;
-      border-bottom: 2px solid #d4af37;
+      gap: 15px;
     }
 
     header img {
-      height: 50px;
-      border-radius: 50%;
-      border: 1px solid #d4af37;
-      padding: 4px;
-      background: #f8f6f1;
+      height: 40px;
     }
 
     header h1 {
       margin: 0;
-      font-size: 28px;
-      font-family: 'Playfair Display', serif;
-      letter-spacing: 1px;
-      font-weight: 700;
+      font-size: 24px;
     }
 
     .container {
-      max-width: 960px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
-
-    section {
-      margin-bottom: 60px;
-      padding: 30px;
-      background: #fffdf8;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      border-radius: 10px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+      max-width: 900px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 22px;
-      font-weight: 600;
-      margin-top: 0;
-      margin-bottom: 16px;
-      color: #101413;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.4);
-      padding-bottom: 8px;
-    }
-
-    p, ul {
-      font-size: 16px;
-      margin: 0 0 16px;
-    }
-
-    ul {
-      list-style: none;
-      padding-left: 0;
-    }
-
-    ul li::before {
-      content: "✔ ";
-      color: #9c8410;
-      margin-right: 6px;
-    }
-
-    ul li {
-      padding: 4px 0;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 5px;
+      margin-top: 30px;
     }
 
     .btn-download {
       display: inline-block;
-      background: transparent;
-      color: #101413;
-      padding: 12px 28px;
-      border-radius: 30px;
-      border: 2px solid #d4af37;
+      background: #2b2d42;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 5px;
       text-decoration: none;
-      font-weight: 600;
-      font-family: 'Playfair Display', serif;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      transition: all 0.3s ease;
-      margin-top: 10px;
+      font-weight: bold;
+      transition: background 0.2s ease;
     }
 
     .btn-download:hover {
-      background: #d4af37;
-      color: #101413;
+      background: #414567;
     }
 
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
       margin-top: 20px;
     }
 
     .gallery img {
       width: 100%;
-      border-radius: 10px;
-      border: 1px solid rgba(212, 175, 55, 0.3);
-      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
-      transition: transform 0.3s ease;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s ease;
     }
 
     .gallery img:hover {
       transform: scale(1.03);
     }
 
+    /* Lightbox styles */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .lightbox img {
+      max-width: 90%;
+      max-height: 80%;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #000;
+    }
+
+    .lightbox:target {
+      display: flex;
+    }
+
+    .lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 30px;
+      color: #fff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
     footer {
-      background: #101413;
-      color: #d4af37;
       text-align: center;
       font-size: 14px;
-      padding: 25px;
-      border-top: 1px solid #d4af37;
-      font-family: 'Playfair Display', serif;
-      margin-top: 60px;
-    }
-
-    footer a {
-      color: #d4af37;
-      text-decoration: none;
-    }
-
-    @media (max-width: 600px) {
-      header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-
-      header h1 {
-        font-size: 22px;
-      }
-
-      .btn-download {
-        padding: 10px 20px;
-        font-size: 14px;
-      }
-
-      section {
-        padding: 20px;
-      }
+      color: #666;
+      padding: 20px;
     }
   </style>
 </head>
 <body>
   <header>
-    <img src="rava_logo.jpg" alt="RAVA Logo" />
+    <img src="rava_logo.jpg" alt="RAVA Logo">
     <h1>RAVA Auto Trader</h1>
   </header>
 
   <div class="container">
+    <h2>About RAVA</h2>
+    <p><strong>RAVA</strong> is a lightweight automated trading bot designed for <strong>IQ Option</strong>.
+       It executes trades automatically, helps reduce stress, and improves trading consistency.</p>
 
-    <section>
-      <h2>About RAVA</h2>
-      <p><strong>RAVA</strong> is a lightweight automated trading bot designed for <strong>IQ Option</strong>.  
-         It executes trades automatically, helps reduce stress, and improves trading consistency.</p>
-    </section>
+    <h2>Features</h2>
+    <ul>
+      <li>✅ Automatic trade execution</li>
+      <li>✅ Compound money management</li>
+      <li>✅ Real & practice account support</li>
+      <li>✅ Simple user interface with tray support</li>
+    </ul>
 
-    <section>
-      <h2>Features</h2>
-      <ul>
-        <li>Automatic trade execution</li>
-        <li>Compound money management</li>
-        <li>Real & practice account support</li>
-        <li>Simple user interface with tray support</li>
-      </ul>
-    </section>
+    <h2>Requirements</h2>
+    <p>RAVA works exclusively with the <strong>IQ Option</strong> trading platform.
+       If you don’t already have it, you can download it here and sign up:</p>
+    <a href="https://iqoption.com" target="_blank" class="btn-download">Download IQ Option</a>
 
-    <section>
-      <h2>Requirements</h2>
-      <p>RAVA works exclusively with the <strong>IQ Option</strong> trading platform.  
-      If you don’t already have it, you can download it here and sign up:</p>
-      <a href="https://iqoption.com" target="_blank" class="btn-download">Download IQ Option</a>
-    </section>
+    <p>Here’s how RAVA looks in action on the trading platform:</p>
+    <div class="gallery">
+      <a href="#img1"><img src="trade1.png" alt="RAVA Trading Screenshot 1" width="250"></a>
+      <a href="#img2"><img src="trade2.png" alt="RAVA Trading Screenshot 2" width="250"></a>
+      <a href="#img3"><img src="trade3.png" alt="RAVA Trading Screenshot 3" width="250"></a>
+    </div>
 
-    <section>
-      <h2>RAVA in Action</h2>
-      <div class="gallery">
-        <img src="trade1.png" alt="RAVA Trading Screenshot 1" />
-        <img src="trade2.png" alt="RAVA Trading Screenshot 2" />
-        <img src="trade3.png" alt="RAVA Trading Screenshot 3" />
-      </div>
-    </section>
+    <!-- Lightbox popups -->
+    <div id="img1" class="lightbox">
+      <a href="#" class="lightbox-close">&times;</a>
+      <img src="trade1.png" alt="">
+    </div>
+    <div id="img2" class="lightbox">
+      <a href="#" class="lightbox-close">&times;</a>
+      <img src="trade2.png" alt="">
+    </div>
+    <div id="img3" class="lightbox">
+      <a href="#" class="lightbox-close">&times;</a>
+      <img src="trade3.png" alt="">
+    </div>
 
-    <section>
-      <h2>Get RAVA</h2>
-      <p>You can download RAVA for free and use it with your Practice account.  
-         To unlock Real Account trading, you will need a <strong>$1500/month subscription</strong>.</p>
-      <a href="form.html" class="btn-download">Get RAVA</a>
-    </section>
+    <h2>Get RAVA</h2>
+    <p>You can download RAVA for free and use it with your Practice account.
+       To unlock Real Account trading, you will need a <strong>$1500/month subscription</strong>.</p>
+    <a href="form.html" class="btn-download">Get RAVA</a>
 
-    <section>
-      <h2>Disclaimer</h2>
-      <p><em>Trading involves risk. Not trading with RAVA carries huge financial risk.  
-         Every setup you miss is money you give away. !!!</em></p>
-    </section>
-
+    <h2>Disclaimer</h2>
+    <p><em>Trading involves risk. Not trading with RAVA carries huge financial risk.
+       Every setup you miss is money you give away. !!!</em></p>
   </div>
 
   <footer>
