@@ -81,16 +81,26 @@
         <option value="pro">Pro</option>
       </select>
 
-      <!-- hidden field that records plan -->
+      <!-- hidden field that records plan (set dynamically from index.html query param) -->
       <input type="hidden" id="plan" name="plan" value="Practice">
 
-      <button type="submit">Download RAVA Free</button>
+      <button type="submit">Continue</button>
     </form>
 
     <small>We’ll send your download link via email. No spam. Cancel anytime.</small>
   </div>
 
   <script>
+  // pick up ?plan= from index.html links
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get("plan") || "Practice";
+  document.getElementById("plan").value = plan;
+  document.getElementById("formTitle").textContent = "Get RAVA — " + plan;
+  if(plan !== "Practice"){
+    document.getElementById("formSubtitle").innerHTML =
+      `Complete the form to continue to payment for <strong>${plan}</strong>.`;
+  }
+
   const form = document.getElementById('ravaForm');
   form.addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -103,26 +113,25 @@
         headers: { 'Accept': 'application/json' }
       });
 
-      // Debug logging
-      console.log("➡️ Sent to:", form.action);
-      console.log("➡️ Status:", res.status);
-
-      const text = await res.text();
-      console.log("➡️ Response body:", text);
-
       if (res.ok) {
-        window.location.href = "thankyou.html";
+        // redirect depending on plan
+        const chosenPlan = formData.get("plan").toLowerCase();
+        if (chosenPlan === "practice") {
+          window.location.href = "thankyou.html?plan=practice";
+        } else if (chosenPlan.includes("starter")) {
+          window.location.href = "payment.html?plan=starter";
+        } else if (chosenPlan.includes("pro")) {
+          window.location.href = "payment.html?plan=pro";
+        }
       } else {
+        const text = await res.text();
         alert("Formspree error: " + res.status + " " + text);
       }
     } catch (err) {
-      console.error("❌ Network/JS error:", err);
       alert("Network error. Check console for details.");
+      console.error(err);
     }
   });
-</script>
+  </script>
 </body>
 </html>
-
-
-
