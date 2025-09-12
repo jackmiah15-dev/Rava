@@ -6,61 +6,91 @@
   <title>Get RAVA Free</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
+      font-family: 'Inter', Arial, sans-serif;
+      background: #101413;
+      color: #fff;
       padding: 40px;
     }
     .form-container {
-      max-width: 500px;
+      max-width: 520px;
       margin: auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      background: #1a1d1c;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+      border: 1px solid #d4af37;
     }
-    h2 { text-align: center; }
-    label { display: block; margin-top: 10px; }
-    input {
-      width: 100%; padding: 10px; margin-top: 5px;
-      border: 1px solid #ccc; border-radius: 5px;
+    h2 {
+      text-align: center;
+      color: #d4af37;
+      margin-bottom: 10px;
+      font-size: 28px;
+    }
+    p {
+      text-align: center;
+      font-size: 15px;
+      color: #ddd;
+    }
+    label { display: block; margin-top: 15px; font-weight: 600; }
+    input, select {
+      width: 100%; padding: 12px; margin-top: 5px;
+      border: 1px solid #555; border-radius: 6px;
+      background: #2a2d2c; color: #fff;
     }
     button {
-      margin-top: 20px;
+      margin-top: 25px;
       width: 100%;
-      padding: 12px;
-      background: #2b2d42;
-      color: #fff;
+      padding: 14px;
+      background: #d4af37;
+      color: #101413;
       border: none;
-      border-radius: 5px;
-      font-size: 16px;
+      border-radius: 6px;
+      font-size: 18px;
+      font-weight: bold;
       cursor: pointer;
+      transition: all 0.2s ease;
     }
-    button:hover { background: #414567; }
+    button:hover { background: #f0d65c; }
+    small {
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      font-size: 12px;
+      color: #aaa;
+    }
   </style>
 </head>
 <body>
   <div class="form-container">
     <h2>Get RAVA Free</h2>
-    <p>Fill in your details below to download RAVA. You’ll get the Practice version for free.  
+    <p>Start trading smarter today. You’ll get instant access to the Practice version.  
     Upgrade anytime to unlock Real Account trading for <strong>$1500/month</strong>.</p>
 
     <form id="ravaForm" action="https://formspree.io/f/xjkoqbpz" method="POST">
-      <label for="name">Name:</label>
+      <label for="name">Full Name</label>
       <input type="text" id="name" name="name" required>
-      
-      <label for="email">Email:</label>
+
+      <label for="email">Email Address</label>
       <input type="email" id="email" name="email" required>
+
+      <label for="experience">Trading Experience</label>
+      <select id="experience" name="experience" required>
+        <option value="">Select...</option>
+        <option value="beginner">Beginner</option>
+        <option value="intermediate">Intermediate</option>
+        <option value="pro">Pro</option>
+      </select>
       
-      <button type="submit">Submit & Continue</button>
+      <button type="submit">Download RAVA Free</button>
     </form>
+
+    <small>We’ll send your download link via email. No spam. Cancel anytime.</small>
   </div>
 
   <script>
-    // Handle form submit manually for guaranteed redirect
     const form = document.getElementById('ravaForm');
     form.addEventListener('submit', async function(e) {
-      e.preventDefault(); // stop normal form submit
-
+      e.preventDefault();
       const formData = new FormData(form);
       try {
         let res = await fetch(form.action, {
@@ -69,7 +99,6 @@
           headers: { 'Accept': 'application/json' }
         });
         if (res.ok) {
-          // ✅ Always redirect on success
           window.location.href = "thankyou.html";
         } else {
           alert("Oops! Something went wrong submitting the form.");
