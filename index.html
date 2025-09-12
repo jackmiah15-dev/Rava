@@ -336,34 +336,35 @@
       leadForm.reset();
     }
 
-    leadForm.addEventListener('submit', function(e){
+     leadForm.addEventListener('submit', async function(e){
       e.preventDefault();
-      const data = {
-        name: leadForm.name.value.trim(),
-        email: leadForm.email.value.trim(),
-        plan: leadForm.plan.value,
-        date: new Date().toISOString()
-      };
-      // Save leads locally for demo. Replace with API integration in prod.
-      const leads = JSON.parse(localStorage.getItem('rava_leads')||'[]');
-      leads.push(data);
-      localStorage.setItem('rava_leads', JSON.stringify(leads));
+      const formData = new FormData(leadForm);
 
-      successMsg.style.display = 'block';
-      leadForm.style.display = 'none';
+      try {
+        let res = await fetch("https://formspree.io/f/xqadjppk", {
+          method: "POST",
+          body: formData,
+          headers: { "Accept": "application/json" }
+        });
 
-      // accessibility focus
-      successMsg.setAttribute('tabindex','-1');
-      successMsg.focus();
-
-      // In production: send to server or email provider here.
+        if (res.ok) {
+          successMsg.style.display = 'block';
+          leadForm.style.display = 'none';
+        } else {
+          const errText = await res.text();
+          alert("Formspree error: " + errText);
+        }
+      } catch (err) {
+        alert("Network error: " + err.message);
+      }
     });
 
-    // close modal on background click
     modalBack.addEventListener('click', function(e){
       if(e.target === modalBack) closeModal();
     });
-
+    document.addEventListener('keydown', function(e){
+      if(e.key === 'Escape') closeModal();
+    });
     // keyboard escape
     document.addEventListener('keydown', function(e){
       if(e.key === 'Escape') closeModal();
@@ -372,3 +373,4 @@
   </script>
 </body>
 </html>
+
