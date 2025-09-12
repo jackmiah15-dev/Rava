@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Get RAVA Free</title>
+  <title>Get RAVA</title>
   <style>
     body {
       font-family: 'Inter', Arial, sans-serif;
@@ -62,8 +62,8 @@
 </head>
 <body>
   <div class="form-container">
-    <h2>Get RAVA Free</h2>
-    <p>Start trading smarter today. You’ll get instant access to the Practice version.  
+    <h2 id="formTitle">Get RAVA Free</h2>
+    <p id="formSubtitle">Start trading smarter today. You’ll get instant access to the Practice version.<br>
     Upgrade anytime to unlock Real Account trading for <strong>$1500/month</strong>.</p>
 
     <form id="ravaForm" action="https://formspree.io/f/xjkoqbpz" method="POST">
@@ -80,7 +80,10 @@
         <option value="intermediate">Intermediate</option>
         <option value="pro">Pro</option>
       </select>
-      
+
+      <!-- hidden field that records plan -->
+      <input type="hidden" id="plan" name="plan" value="Practice">
+
       <button type="submit">Download RAVA Free</button>
     </form>
 
@@ -89,6 +92,28 @@
 
   <script>
     const form = document.getElementById('ravaForm');
+    const title = document.getElementById('formTitle');
+    const subtitle = document.getElementById('formSubtitle');
+    const planField = document.getElementById('plan');
+    const button = form.querySelector('button');
+
+    // read ?plan= from URL and adjust form dynamically
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get('plan');
+
+    if (plan) {
+      planField.value = plan;
+      if (plan === 'Starter') {
+        title.textContent = 'Get RAVA Live Starter';
+        subtitle.innerHTML = 'Unlock Real Account trading with the <strong>Starter Plan</strong>.';
+        button.textContent = 'Get Live Starter';
+      } else if (plan === 'Pro') {
+        title.textContent = 'Apply for RAVA Pro';
+        subtitle.innerHTML = 'Gain full access with the <strong>Pro Plan</strong>.';
+        button.textContent = 'Apply for Pro';
+      }
+    }
+
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       const formData = new FormData(form);
