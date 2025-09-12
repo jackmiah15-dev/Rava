@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RAVA Payment</title>
+  <style>
+    body { font-family: Inter, Arial, sans-serif; background: #101413; color: #fff; padding: 40px; }
+    .box { max-width: 620px; margin: auto; background: #1a1d1c; padding: 30px;
+           border-radius: 12px; border: 1px solid #d4af37; box-shadow: 0 4px 12px rgba(0,0,0,0.4);}
+    h2 { color: #d4af37; text-align: center; margin-bottom: 15px; }
+    p { color: #ddd; text-align: center; }
+    .method { margin: 20px 0; padding: 15px; background: #2a2d2c; border-radius: 8px; }
+    .method strong { color: #d4af37; }
+    code { background: #101413; padding: 4px 6px; border-radius: 4px; }
+    .btn { display: block; margin-top: 25px; text-align: center; padding: 14px;
+           background: #d4af37; color: #101413; font-weight: bold;
+           border-radius: 6px; text-decoration: none; }
+    .btn:hover { background: #f0d65c; }
+  </style>
+</head>
+<body>
+  <div class="box" id="content">
+    <!-- JS injects content here -->
+  </div>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const plan = params.get("plan")?.toLowerCase() || "starter";
+    const step = params.get("step") || "payment"; // step = payment OR verify
+    const content = document.getElementById("content");
+
+    function paymentScreen(title, price, usdt, wallet, verifyLink) {
+      return `
+        <h2>Complete Your Payment</h2>
+        <p>Thanks for signing up for the <strong>${title}</strong> (${price}/month).<br>
+           To activate your account and receive your download link, please complete payment below:</p>
+
+        <div class="method">
+          <h3>💳 Option 1: Binance Pay (Recommended)</h3>
+          <p>Send <strong>${usdt} USDT (TRC20)</strong> to:</p>
+          <p><code>YOUR-BINANCE-PAY-ID</code></p>
+        </div>
+
+        <div class="method">
+          <h3>💳 Option 2: Advcash</h3>
+          <p>Send <strong>${price}</strong> to this wallet:</p>
+          <p><code>YOUR-ADVCASH-WALLET</code></p>
+        </div>
+
+        <p>After payment, confirm below to receive your download link:</p>
+        <a class="btn" href="${verifyLink}">✅ I Have Paid</a>
+      `;
+    }
+
+    function verifyScreen(title, downloadLink) {
+      return `
+        <h2>Verify Payment</h2>
+        <p>Thanks for your payment for the <strong>${title}</strong> plan.<br>
+        Our team will confirm your transaction within 12–24 hours.</p>
+
+        <p>Meanwhile, you can access your <strong>RAVA download</strong> here:</p>
+        <a class="btn" href="${downloadLink}">⬇️ Download RAVA</a>
+
+        <p style="margin-top:20px;font-size:13px;color:#aaa">
+          ⚠️ If payment is not verified, your account will remain inactive.<br>
+          Keep your transaction ID for reference.
+        </p>
+      `;
+    }
+
+    // Render screens
+    if (plan === "practice") {
+      content.innerHTML = `
+        <h2>Welcome to Practice Mode</h2>
+        <p>The <strong>Practice Plan</strong> is <span style="color:#d4af37">100% free</span>.<br>
+        No payment is required — start right away.</p>
+        <a class="btn" href="thankyou.html?plan=practice">🚀 Continue to Download</a>
+      `;
+    } else if (plan === "starter") {
+      if (step === "payment") {
+        content.innerHTML = paymentScreen("Live Starter Plan", "$149", "149", "YOUR-ADVCASH-WALLET", "payment.html?plan=starter&step=verify");
+      } else if (step === "verify") {
+        content.innerHTML = verifyScreen("Live Starter", "thankyou.html?plan=starter");
+      }
+    } else if (plan === "pro") {
+      if (step === "payment") {
+        content.innerHTML = paymentScreen("Pro Trader Plan", "$1500", "1500", "YOUR-ADVCASH-WALLET", "payment.html?plan=pro&step=verify");
+      } else if (step === "verify") {
+        content.innerHTML = verifyScreen("Pro Trader", "thankyou.html?plan=pro");
+      }
+    }
+  </script>
+</body>
+</html>
