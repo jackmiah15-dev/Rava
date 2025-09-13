@@ -336,42 +336,46 @@
       leadForm.reset();
     }
 
-     leadForm.addEventListener('submit', async function(e){
-      e.preventDefault();
-      const formData = new FormData(leadForm);
-
-      try {
-        let res = await fetch("https://formspree.io/f/xqadjppk", {
-          method: "POST",
-          body: formData,
-          headers: { "Accept": "application/json" }
-        });
-
-        if (res.ok) {
-          successMsg.style.display = 'block';
-          leadForm.style.display = 'none';
-        } else {
-          const errText = await res.text();
-          alert("Formspree error: " + errText);
-        }
-      } catch (err) {
-        alert("Network error: " + err.message);
+    leadForm.addEventListener('submit', async function(e){
+    e.preventDefault();
+    const formData = new FormData(leadForm);
+    const selectedPlan = formData.get("plan");
+  
+    try {
+      let res = await fetch("https://formspree.io/f/xqadjppk", {
+        method: "POST",
+        body: formData,
+        headers: { "Accept": "application/json" }
+      });
+  
+      if (res.ok) {
+        // Success message (optional)
+        successMsg.style.display = 'block';
+  
+        // Wait 1s then redirect
+        setTimeout(() => {
+          if (selectedPlan.toLowerCase().includes("practice")) {
+            window.location.href = "thankyou.html?plan=practice";
+          } else if (selectedPlan.toLowerCase().includes("starter")) {
+            window.location.href = "payment.html?plan=starter&step=payment";
+          } else if (selectedPlan.toLowerCase().includes("pro")) {
+            window.location.href = "payment.html?plan=pro&step=payment";
+          }
+        }, 1000);
+  
+      } else {
+        const errText = await res.text();
+        alert("Formspree error: " + errText);
       }
-    });
+    } catch (err) {
+      alert("Network error: " + err.message);
+    }
+  });
 
-    modalBack.addEventListener('click', function(e){
-      if(e.target === modalBack) closeModal();
-    });
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape') closeModal();
-    });
-    // keyboard escape
-    document.addEventListener('keydown', function(e){
-      if(e.key === 'Escape') closeModal();
-    });
 
   </script>
 </body>
 </html>
+
 
 
