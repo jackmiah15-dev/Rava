@@ -108,15 +108,17 @@
       `;
     }
 
-    function verifyScreen(title, downloadLink) {
+    function verifyScreen(title, thankyouLink) {
+      // Show processing message, then redirect
+      setTimeout(() => {
+        window.location.href = thankyouLink;
+      }, 1800); // 1.8s delay
+
       return `
-        <h2>Payment Verification</h2>
-        <p>Thanks for your payment for the <strong>${title}</strong> plan.<br>
-        Our team will confirm within 12–24 hours.</p>
-
-        <a href="${downloadLink}" class="btn btn-confirm">⬇️ Download RAVA</a>
-
-        <small>⚠️ Your license key will be emailed after payment is verified.</small>
+        <h2>Processing Payment…</h2>
+        <p>Thanks for choosing the <strong>${title}</strong> plan.<br>
+        Please wait a moment while we confirm.</p>
+        <p style="color:#d4af37">Redirecting you to your download page...</p>
       `;
     }
 
