@@ -59,6 +59,7 @@
       text-decoration: none;
       font-weight: bold;
       transition: all 0.2s ease;
+      cursor: pointer;
     }
     .btn-confirm {
       background: #d4af37;
@@ -84,7 +85,7 @@
     const step = params.get("step") || "payment"; 
     const content = document.getElementById("content");
 
-    function paymentScreen(title, price, usdt, verifyLink) {
+    function paymentScreen(title, price, usdt) {
       return `
         <h2>Complete Your Payment</h2>
         <p>You selected the <strong>${title}</strong> plan  
@@ -103,23 +104,41 @@
           <code>YOUR-ADVCASH-WALLET</code>
         </div>
 
-        <a class="btn btn-confirm" href="${verifyLink}">✅ I Have Paid</a>
+        <button class="btn btn-confirm" onclick="markPaymentPending('${plan}', '${title}')">✅ I Have Paid</button>
         <small>After payment, keep your transaction ID for verification.</small>
       `;
     }
 
-    function verifyScreen(title, thankyouLink) {
-      // Show processing message, then redirect
-      setTimeout(() => {
-        window.location.href = thankyouLink;
-      }, 1800); // 1.8s delay
-
+    function verifyingScreen(title) {
       return `
-        <h2>Processing Payment…</h2>
+        <h2>Payment Submitted</h2>
         <p>Thanks for choosing the <strong>${title}</strong> plan.<br>
-        Please wait a moment while we confirm.</p>
-        <p style="color:#d4af37">Redirecting you to your download page...</p>
+        Your payment has been marked as <span style="color:#d4af37">pending verification</span>.</p>
+        <p>We’ll confirm and send your license key shortly (usually within 24 hours).</p>
       `;
+    }
+
+    async function markPaymentPending(plan, title) {
+      // Ask for email
+      const email = prompt("Enter your email (where license will be sent):");
+      if (!email) return alert("Email is required to continue.");
+
+      try {
+        const res = await fetch("https://rava-license-server.onrender.com/api/mark_payment_pending", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, plan })
+        });
+        const data = await res.json();
+
+        if (data.status === "pending") {
+          content.innerHTML = verifyingScreen(title);
+        } else {
+          alert("Error: " + (data.message || "Could not mark payment"));
+        }
+      } catch (err) {
+        alert("Network error. Try again.");
+      }
     }
 
     // Render based on plan
@@ -131,13 +150,9 @@
         <a class="btn btn-confirm" href="thankyou.html?plan=practice">🚀 Continue to Download</a>
       `;
     } else if (plan === "starter") {
-      content.innerHTML = (step === "payment") 
-        ? paymentScreen("Live Starter Plan", "$149", "149", "payment.html?plan=starter&step=verify")
-        : verifyScreen("Live Starter Plan", "thankyou.html?plan=starter");
+      content.innerHTML = paymentScreen("Live Starter Plan", "$149", "149");
     } else if (plan === "pro") {
-      content.innerHTML = (step === "payment")
-        ? paymentScreen("Pro Trader Plan", "$1500", "1500", "payment.html?plan=pro&step=verify")
-        : verifyScreen("Pro Trader Plan", "thankyou.html?plan=pro");
+      content.innerHTML = paymentScreen("Pro Trader Plan", "$1500", "1500");
     }
   </script>
 </body>
