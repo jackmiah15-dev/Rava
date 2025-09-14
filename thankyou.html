@@ -32,6 +32,15 @@
       color: #ddd;
       margin-bottom: 20px;
     }
+    code {
+      display: inline-block;
+      background: #2b2d42;
+      color: #f8f8f8;
+      padding: 6px 10px;
+      border-radius: 6px;
+      margin-top: 10px;
+      font-size: 14px;
+    }
     .btn {
       display: inline-block;
       margin: 12px;
@@ -61,58 +70,63 @@
 </head>
 <body>
   <div class="container" id="content">
-    <!-- JS will inject the right content -->
+    <h2>Loading...</h2>
+    <p>Please wait while we verify your license.</p>
   </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
     const plan = params.get("plan")?.toLowerCase() || "practice";
+    const email = params.get("email")?.toLowerCase() || "";
+    const key = params.get("key") || ""; // optional if you pass license key
     const content = document.getElementById("content");
 
     if (plan === "practice") {
       content.innerHTML = `
         <h2>Thank You!</h2>
         <p>Your <strong>Practice Account version</strong> of RAVA is ready.</p>
-
         <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" 
            class="btn btn-download" target="_blank">⬇️ Download RAVA (Free)</a>
-
-        <p>Want to trade <strong>live with real capital</strong>?  
-           Unlock the full power of RAVA Pro today.</p>
-
+        <p>Want to trade <strong>live with real capital</strong>? Unlock the full power of RAVA Pro today.</p>
         <a href="pricing.html" class="btn btn-upgrade">🚀 Upgrade to Pro ($149–$1500/mo)</a>
-
-        <p>Join our trader community for setup help, strategy tips, and exclusive updates:</p>
-        <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Join Our Telegram</a>
-
-        <small>We respect your privacy. Your download link has also been sent to your email.</small>
       `;
-    } else if (plan === "starter") {
-      content.innerHTML = `
-        <h2>Thank You!</h2>
-        <p>Your <strong>Live Starter Plan</strong> payment is being verified.</p>
-
-        <a href="https://t.me/+d8xFrQ_JgyQ0NzY0"
-           class="btn btn-download" target="_blank">⬇️ Download RAVA</a>
-
-        <p>⚠️ A unique <strong>license key</strong> will be emailed to <em>your registered address</em> once payment is confirmed.</p>
-
-        <p>Need help? Join our trader community:</p>
-        <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
-      `;
-    } else if (plan === "pro") {
-      content.innerHTML = `
-        <h2>Thank You!</h2>
-        <p>Your <strong>Pro Trader Plan</strong> payment is being verified.</p>
-
-        <a href="https://t.me/+d8xFrQ_JgyQ0NzY0"
-           class="btn btn-download" target="_blank">⬇️ Download RAVA</a>
-
-        <p>⚠️ A unique <strong>Pro license key</strong> will be emailed to <em>your registered address</em> once payment is confirmed.</p>
-
-        <p>Need help? Join our trader community:</p>
-        <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
-      `;
+    } else {
+      // Paid plans (starter/pro) → check license status
+      fetch(`/api/check_license?email=${encodeURIComponent(email)}&key=${encodeURIComponent(key)}`)
+        .then(r => r.json())
+        .then(data => {
+          if (data.status === "valid") {
+            content.innerHTML = `
+              <h2>✅ License Active</h2>
+              <p>Your <strong>${plan.toUpperCase()} Plan</strong> is active until:</p>
+              <p><strong>${data.expires_on}</strong></p>
+              <p><code>${data.license_key || key}</code></p>
+              <a href="RAVA-Installer.exe" class="btn btn-download">⬇️ Download RAVA</a>
+              <p>Need help? Join our trader community:</p>
+              <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
+            `;
+          } else if (data.status === "expired") {
+            content.innerHTML = `
+              <h2>⚠️ License Expired</h2>
+              <p>Your license expired on <strong>${data.expires_on}</strong>.</p>
+              <a href="pricing.html" class="btn btn-upgrade">🔄 Renew Plan</a>
+            `;
+          } else {
+            content.innerHTML = `
+              <h2>⌛ Payment Pending</h2>
+              <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
+              <p>We will notify you at <strong>${email}</strong> once approved.</p>
+              <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
+            `;
+          }
+        })
+        .catch(err => {
+          console.error(err);
+          content.innerHTML = `
+            <h2>❌ Error</h2>
+            <p>We couldn’t verify your license at this time. Please try again later.</p>
+          `;
+        });
     }
   </script>
 </body>
