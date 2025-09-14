@@ -75,14 +75,12 @@
   </style>
 </head>
 <body>
-  <div class="container" id="content">
-    <!-- JS injects content here -->
-  </div>
+  <div class="container" id="content"></div>
 
   <script>
+    const API_BASE = "https://rava-license-server.onrender.com"; // adjust if needed
     const params = new URLSearchParams(window.location.search);
     const plan = params.get("plan")?.toLowerCase() || "starter";
-    const step = params.get("step") || "payment"; 
     const content = document.getElementById("content");
 
     function paymentScreen(title, price, usdt) {
@@ -109,22 +107,22 @@
       `;
     }
 
-    function verifyingScreen(title) {
+    function verifyingScreen(title, email, plan) {
       return `
         <h2>Payment Submitted</h2>
         <p>Thanks for choosing the <strong>${title}</strong> plan.<br>
         Your payment has been marked as <span style="color:#d4af37">pending verification</span>.</p>
         <p>We’ll confirm and send your license key shortly (usually within 24 hours).</p>
+        <button class="btn btn-confirm" onclick="checkLicense('${email}', '${plan}')">🔑 Check License Status</button>
       `;
     }
 
     async function markPaymentPending(plan, title) {
-      // Ask for email
-      const email = prompt("Enter your email (where license will be sent):");
+      const email = prompt("Enter your email (where license will be linked):");
       if (!email) return alert("Email is required to continue.");
 
       try {
-        const res = await fetch("https://rava-license-server.onrender.com/api/mark_payment_pending", {
+        const res = await fetch(`${API_BASE}/api/mark_payment_pending`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, plan })
@@ -132,12 +130,41 @@
         const data = await res.json();
 
         if (data.status === "pending") {
-          content.innerHTML = verifyingScreen(title);
+          content.innerHTML = verifyingScreen(title, email, plan);
         } else {
           alert("Error: " + (data.message || "Could not mark payment"));
         }
       } catch (err) {
         alert("Network error. Try again.");
+      }
+    }
+
+    async function checkLicense(email, plan) {
+      try {
+        // The license key is deterministic (generated from email), so user can check without admin emailing it
+        const licenseKey = btoa(
+          String.fromCharCode.apply(
+            null,
+            new Uint8Array(
+              await crypto.subtle.digest("SHA-256", new TextEncoder().encode(email.toLowerCase()))
+            )
+          )
+        ).replace(/=+$/, "");
+
+        const res = await fetch(`${API_BASE}/api/check_license?email=${encodeURIComponent(email)}&key=${encodeURIComponent(licenseKey)}`);
+        const data = await res.json();
+
+        if (data.status === "valid") {
+          content.innerHTML = `
+            <h2>✅ License Active</h2>
+            <p>Your license is valid until: <span style="color:#d4af37">${data.expires_on}</span></p>
+            <a class="btn btn-confirm" href="thankyou.html?plan=${plan}">⬇️ Download RAVA</a>
+          `;
+        } else {
+          alert("Status: " + data.status + " — " + (data.message || ""));
+        }
+      } catch (err) {
+        alert("Error checking license.");
       }
     }
 
