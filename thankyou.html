@@ -3,174 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Thank You - RAVA Download</title>
+  <title>Thank You - RAVA</title>
   <style>
-    body {
-      font-family: 'Inter', Arial, sans-serif;
-      background: #101413;
-      color: #fff;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    .container {
-      max-width: 640px;
-      margin: 80px auto;
-      background: #1a1d1c;
-      padding: 40px 30px;
-      border-radius: 12px;
-      border: 1px solid #d4af37;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-    }
-    h2 {
-      color: #d4af37;
-      font-size: 30px;
-      margin-bottom: 15px;
-    }
-    p {
-      font-size: 16px;
-      color: #ddd;
-      margin-bottom: 20px;
-    }
-    code {
-      display: inline-block;
-      background: #2b2d42;
-      color: #f8f8f8;
-      padding: 6px 10px;
-      border-radius: 6px;
-      margin-top: 10px;
-      font-size: 14px;
-    }
-    .btn {
-      display: inline-block;
-      margin: 12px;
-      padding: 14px 22px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: all 0.2s ease;
-    }
-    .btn-download {
-      background: #d4af37;
-      color: #101413;
-    }
-    .btn-download:hover { background: #f0d65c; }
-    .btn-upgrade {
-      background: #2b2d42;
-      color: #fff;
-    }
-    .btn-upgrade:hover { background: #414567; }
-    small {
-      display: block;
-      margin-top: 20px;
-      color: #aaa;
-      font-size: 12px;
-    }
+    body { font-family: 'Inter', sans-serif; background:#101413; color:white; text-align:center; padding:60px; }
+    h2 { color:#d4af37; font-size:28px; }
+    p { color:#ddd; font-size:16px; }
   </style>
 </head>
 <body>
-  <div class="container" id="content">
-    <h2>Loading...</h2>
-    <p>Please wait while we verify your license.</p>
-  </div>
+  <h2>✅ Thank you for your payment!</h2>
+  <p>You’ll be redirected to your license dashboard shortly...</p>
+  <p>If not redirected, <a id="manual" href="#">click here</a>.</p>
 
   <script>
-    const API_BASE = "https://rava-license-server.onrender.com/api";
     const params = new URLSearchParams(window.location.search);
-    const plan = params.get("plan")?.toLowerCase() || "practice";
-    const queryEmail = params.get("email")?.toLowerCase() || "";
-    const queryKey = params.get("key") || "";
+    const email = params.get("email")?.toLowerCase() || "";
+    const plan = params.get("plan") || "practice";
 
-    const content = document.getElementById("content");
+    // Save email to localStorage for consistency
+    if (email) localStorage.setItem("license_email", email);
 
-    // Use localStorage, fallback to query params
-    let email = localStorage.getItem("license_email") || queryEmail;
-    let licenseKey = localStorage.getItem("license_key") || queryKey;
+    const dashboardUrl = `user-dashboard.html?email=${encodeURIComponent(email)}&plan=${encodeURIComponent(plan)}`;
+    document.getElementById("manual").href = dashboardUrl;
 
-    // ✅ If query params provided, store them immediately
-    if (queryEmail) {
-      localStorage.setItem("license_email", queryEmail);
-      email = queryEmail;
-    }
-    if (queryKey) {
-      localStorage.setItem("license_key", queryKey);
-      licenseKey = queryKey;
-    }
-
-    async function checkLicense() {
-      if (plan === "practice") {
-        content.innerHTML = `
-          <h2>Thank You!</h2>
-          <p>Your <strong>Practice Account version</strong> of RAVA is ready.</p>
-          <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" 
-             class="btn btn-download" target="_blank">⬇️ Download RAVA (Free)</a>
-          <p>Want to trade <strong>live with real capital</strong>? Unlock the full power of RAVA Pro today.</p>
-          <a href="pricing.html" class="btn btn-upgrade">🚀 Upgrade to Pro ($149–$1500/mo)</a>
-        `;
-        return;
-      }
-
-      try {
-        let url = `${API_BASE}/check_license?email=${encodeURIComponent(email)}`;
-        if (licenseKey) {
-          url += `&key=${encodeURIComponent(licenseKey)}`;
-        }
-
-        const res = await fetch(url);
-        const data = await res.json();
-
-        if (data.status === "valid") {
-          // ✅ Always persist license details
-          localStorage.setItem("license_email", data.email);
-          localStorage.setItem("license_key", data.license_key);
-
-          content.innerHTML = `
-            <h2>✅ License Active</h2>
-            <p>Your <strong>${plan.toUpperCase()} Plan</strong> is active until:</p>
-            <p><strong>${data.expires_on}</strong></p>
-            <p><code>${data.license_key}</code></p>
-            <a href="RAVA-Installer.exe" class="btn btn-download">⬇️ Download RAVA</a>
-            <p>Need help? Join our trader community:</p>
-            <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
-          `;
-        } else if (data.status === "expired") {
-          content.innerHTML = `
-            <h2>⚠️ License Expired</h2>
-            <p>Your license expired on <strong>${data.expires_on}</strong>.</p>
-            <a href="pricing.html" class="btn btn-upgrade">🔄 Renew Plan</a>
-          `;
-        } else if (data.status === "pending") {
-          content.innerHTML = `
-            <h2>⌛ Payment Pending</h2>
-            <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
-            <p>We will notify you at <strong>${email}</strong> once approved.</p>
-            <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
-          `;
-        } else if (data.status === "rejected") {
-          content.innerHTML = `
-            <h2>❌ Payment Rejected</h2>
-            <p>Unfortunately, your payment could not be verified.</p>
-            <p>Please try again or contact support.</p>
-            <a href="pricing.html" class="btn btn-upgrade">💳 Retry Payment</a>
-            <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
-          `;
-        } else {
-          content.innerHTML = `
-            <h2>❌ Error</h2>
-            <p>${data.message || "We couldn’t verify your license at this time."}</p>
-          `;
-        }
-      } catch (err) {
-        console.error(err);
-        content.innerHTML = `
-          <h2>❌ Error</h2>
-          <p>We couldn’t verify your license at this time. Please try again later.</p>
-        `;
-      }
-    }
-
-    // Run check on load
-    checkLicense();
+    // Redirect after 4s
+    setTimeout(() => { window.location.href = dashboardUrl }, 4000);
   </script>
 </body>
 </html>
