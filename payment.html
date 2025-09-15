@@ -117,57 +117,27 @@
       `;
     }
 
-    async function markPaymentPending(plan, title) {
-      const email = prompt("Enter your email (where license will be linked):");
-      if (!email) return alert("Email is required to continue.");
-    
-      try {
-        const res = await fetch(`${API_BASE}/mark_payment_pending`, {  // FIXED
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, plan })
-        });
-        const data = await res.json();
-    
-        if (data.status === "pending") {
-          content.innerHTML = verifyingScreen(title, email, plan);
-        } else {
-          alert("Error: " + (data.message || "Could not mark payment"));
-        }
-      } catch (err) {
-        alert("Network error. Try again.");
-      }
+async function checkLicense(email, plan) {
+  try {
+    const res = await fetch(
+      `${API_BASE}/check_license?email=${encodeURIComponent(email)}`
+    );
+    const data = await res.json();
+
+    if (data.status === "valid") {
+      content.innerHTML = `
+        <h2>✅ License Active</h2>
+        <p>Your license is valid until: <span style="color:#d4af37">${data.expires_on}</span></p>
+        <a class="btn btn-confirm" href="thankyou.html?plan=${plan}">⬇️ Download RAVA</a>
+      `;
+    } else {
+      alert("Status: " + data.status + " — " + (data.message || ""));
     }
-    
-    async function checkLicense(email, plan) {
-      try {
-        const licenseKey = btoa(
-          String.fromCharCode.apply(
-            null,
-            new Uint8Array(
-              await crypto.subtle.digest("SHA-256", new TextEncoder().encode(email.toLowerCase()))
-            )
-          )
-        ).replace(/=+$/, "");
-    
-        const res = await fetch(
-          `${API_BASE}/check_license?email=${encodeURIComponent(email)}&key=${encodeURIComponent(licenseKey)}`
-        ); // FIXED
-        const data = await res.json();
-    
-        if (data.status === "valid") {
-          content.innerHTML = `
-            <h2>✅ License Active</h2>
-            <p>Your license is valid until: <span style="color:#d4af37">${data.expires_on}</span></p>
-            <a class="btn btn-confirm" href="thankyou.html?plan=${plan}">⬇️ Download RAVA</a>
-          `;
-        } else {
-          alert("Status: " + data.status + " — " + (data.message || "")); 
-        }
-      } catch (err) {
-        alert("Error checking license.");
-      }
-    }
+  } catch (err) {
+    alert("Error checking license.");
+  }
+}
+
     // Render based on plan
     if (plan === "practice") {
       content.innerHTML = `
