@@ -78,7 +78,7 @@
   <div class="container" id="content"></div>
 
   <script>
-    const API_BASE = "https://rava-license-server.onrender.com"; // adjust if needed
+    const API_BASE = "https://rava-license-server.onrender.com/api/"; // adjust if needed
     const params = new URLSearchParams(window.location.search);
     const plan = params.get("plan")?.toLowerCase() || "starter";
     const content = document.getElementById("content");
