@@ -83,9 +83,19 @@
 
     const content = document.getElementById("content");
 
-    // Prefer localStorage values
-    const email = localStorage.getItem("license_email") || queryEmail;
-    const licenseKey = localStorage.getItem("license_key") || queryKey;
+    // Use localStorage, fallback to query params
+    let email = localStorage.getItem("license_email") || queryEmail;
+    let licenseKey = localStorage.getItem("license_key") || queryKey;
+
+    // ✅ If query params provided, store them immediately
+    if (queryEmail) {
+      localStorage.setItem("license_email", queryEmail);
+      email = queryEmail;
+    }
+    if (queryKey) {
+      localStorage.setItem("license_key", queryKey);
+      licenseKey = queryKey;
+    }
 
     async function checkLicense() {
       if (plan === "practice") {
@@ -110,7 +120,7 @@
         const data = await res.json();
 
         if (data.status === "valid") {
-          // Save updated license info
+          // ✅ Always persist license details
           localStorage.setItem("license_email", data.email);
           localStorage.setItem("license_key", data.license_key);
 
@@ -159,9 +169,8 @@
       }
     }
 
-    // Run on load
+    // Run check on load
     checkLicense();
   </script>
 </body>
 </html>
-
