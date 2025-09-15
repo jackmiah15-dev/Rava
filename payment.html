@@ -141,12 +141,20 @@
     
     async function checkLicense(email, plan) {
       try {
-        const res = await fetch(
-          `${API_BASE}/check_license?email=${encodeURIComponent(email)}`
-        );
+        const licenseKey = localStorage.getItem("license_key"); // check if we already stored it
+        let url = `${API_BASE}/check_license?email=${encodeURIComponent(email)}`;
+        if (licenseKey) {
+          url += `&key=${encodeURIComponent(licenseKey)}`;
+        }
+    
+        const res = await fetch(url);
         const data = await res.json();
     
         if (data.status === "valid") {
+          // store license key for future calls
+          localStorage.setItem("license_email", data.email);
+          localStorage.setItem("license_key", data.license_key);
+    
           content.innerHTML = `
             <h2>✅ License Active</h2>
             <p>Your license is valid until: <span style="color:#d4af37">${data.expires_on}</span></p>
