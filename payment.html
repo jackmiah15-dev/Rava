@@ -130,6 +130,8 @@
         const data = await res.json();
     
         if (data.status === "pending") {
+          // Save email for later license checks
+          localStorage.setItem("license_email", email);
           content.innerHTML = verifyingScreen(title, email, plan);
         } else {
           alert("Error: " + (data.message || "Could not mark payment"));
@@ -141,25 +143,27 @@
     
     async function checkLicense(email, plan) {
       try {
-        const licenseKey = localStorage.getItem("license_key"); // check if we already stored it
-        let url = `${API_BASE}/check_license?email=${encodeURIComponent(email)}`;
+        const savedEmail = localStorage.getItem("license_email") || email;
+        const licenseKey = localStorage.getItem("license_key");
+
+        let url = `${API_BASE}/check_license?email=${encodeURIComponent(savedEmail)}`;
         if (licenseKey) {
           url += `&key=${encodeURIComponent(licenseKey)}`;
         }
-    
+
         const res = await fetch(url);
         const data = await res.json();
     
         if (data.status === "valid") {
-          // store license key for future calls
+          // Save license for future requests
           localStorage.setItem("license_email", data.email);
           localStorage.setItem("license_key", data.license_key);
-    
+
           content.innerHTML = `
             <h2>✅ License Active</h2>
             <p>Your license is valid until: <span style="color:#d4af37">${data.expires_on}</span></p>
             <p><code>${data.license_key}</code></p>
-            <a class="btn btn-confirm" href="thankyou.html?plan=${plan}&email=${encodeURIComponent(email)}">⬇️ Download RAVA</a>
+            <a class="btn btn-confirm" href="thankyou.html?plan=${plan}&email=${encodeURIComponent(savedEmail)}">⬇️ Download RAVA</a>
           `;
         } else if (data.status === "expired") {
           content.innerHTML = `
@@ -171,7 +175,7 @@
           content.innerHTML = `
             <h2>⌛ Payment Pending</h2>
             <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
-            <p>We will notify you at <strong>${email}</strong> once approved.</p>
+            <p>We will notify you at <strong>${savedEmail}</strong> once approved.</p>
           `;
         } else if (data.status === "rejected") {
           content.innerHTML = `
@@ -188,12 +192,11 @@
       }
     }
 
-
-    // Expose to global scope for onclick buttons
+    // Expose to global scope
     window.markPaymentPending = markPaymentPending;
     window.checkLicense = checkLicense;
 
-    // Render based on plan
+    // Render plan-specific screen
     if (plan === "practice") {
       content.innerHTML = `
         <h2>Practice Mode</h2>
