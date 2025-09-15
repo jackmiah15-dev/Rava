@@ -78,7 +78,7 @@
   <div class="container" id="content"></div>
 
   <script>
-    const API_BASE = "https://rava-license-server.onrender.com/api/"; // adjust if needed
+    const API_BASE = "https://rava-license-server.onrender.com/api"; // adjust if needed
     const params = new URLSearchParams(window.location.search);
     const plan = params.get("plan")?.toLowerCase() || "starter";
     const content = document.getElementById("content");
@@ -120,15 +120,15 @@
     async function markPaymentPending(plan, title) {
       const email = prompt("Enter your email (where license will be linked):");
       if (!email) return alert("Email is required to continue.");
-
+    
       try {
-        const res = await fetch(`${API_BASE}/api/mark_payment_pending`, {
+        const res = await fetch(`${API_BASE}/mark_payment_pending`, {  // FIXED
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, plan })
         });
         const data = await res.json();
-
+    
         if (data.status === "pending") {
           content.innerHTML = verifyingScreen(title, email, plan);
         } else {
@@ -138,10 +138,9 @@
         alert("Network error. Try again.");
       }
     }
-
+    
     async function checkLicense(email, plan) {
       try {
-        // The license key is deterministic (generated from email), so user can check without admin emailing it
         const licenseKey = btoa(
           String.fromCharCode.apply(
             null,
@@ -150,10 +149,12 @@
             )
           )
         ).replace(/=+$/, "");
-
-        const res = await fetch(`${API_BASE}/api/check_license?email=${encodeURIComponent(email)}&key=${encodeURIComponent(licenseKey)}`);
+    
+        const res = await fetch(
+          `${API_BASE}/check_license?email=${encodeURIComponent(email)}&key=${encodeURIComponent(licenseKey)}`
+        ); // FIXED
         const data = await res.json();
-
+    
         if (data.status === "valid") {
           content.innerHTML = `
             <h2>✅ License Active</h2>
@@ -161,13 +162,12 @@
             <a class="btn btn-confirm" href="thankyou.html?plan=${plan}">⬇️ Download RAVA</a>
           `;
         } else {
-          alert("Status: " + data.status + " — " + (data.message || ""));
+          alert("Status: " + data.status + " — " + (data.message || "")); 
         }
       } catch (err) {
         alert("Error checking license.");
       }
     }
-
     // Render based on plan
     if (plan === "practice") {
       content.innerHTML = `
