@@ -91,7 +91,7 @@
         <a href="pricing.html" class="btn btn-upgrade">🚀 Upgrade to Pro ($149–$1500/mo)</a>
       `;
     } else {
-   fetch(`/api/check_license?email=${encodeURIComponent(email)}&key=${encodeURIComponent(key)}`)
+   fetch(`/api/check_license?email=${encodeURIComponent(email)}`)
     .then(r => r.json())
     .then(data => {
       if (data.status === "valid") {
@@ -99,7 +99,7 @@
           <h2>✅ License Active</h2>
           <p>Your <strong>${plan.toUpperCase()} Plan</strong> is active until:</p>
           <p><strong>${data.expires_on}</strong></p>
-          <p><code>${data.license_key || key}</code></p>
+          <p><code>${data.license_key}</code></p>
           <a href="RAVA-Installer.exe" class="btn btn-download">⬇️ Download RAVA</a>
           <p>Need help? Join our trader community:</p>
           <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
@@ -131,7 +131,7 @@
           <p>${data.message || "We couldn’t verify your license at this time."}</p>
         `;
       }
-    })
+    });
     .catch(err => {
       console.error(err);
       content.innerHTML = `
@@ -144,4 +144,5 @@
   </script>
 </body>
 </html>
+
 
