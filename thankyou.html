@@ -75,74 +75,92 @@
   </div>
 
   <script>
+    const API_BASE = "https://rava-license-server.onrender.com/api";
     const params = new URLSearchParams(window.location.search);
     const plan = params.get("plan")?.toLowerCase() || "practice";
-    const email = params.get("email")?.toLowerCase() || "";
-    const key = params.get("key") || "";
+    const queryEmail = params.get("email")?.toLowerCase() || "";
+    const queryKey = params.get("key") || "";
+
     const content = document.getElementById("content");
 
-    if (plan === "practice") {
-      content.innerHTML = `
-        <h2>Thank You!</h2>
-        <p>Your <strong>Practice Account version</strong> of RAVA is ready.</p>
-        <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" 
-           class="btn btn-download" target="_blank">⬇️ Download RAVA (Free)</a>
-        <p>Want to trade <strong>live with real capital</strong>? Unlock the full power of RAVA Pro today.</p>
-        <a href="pricing.html" class="btn btn-upgrade">🚀 Upgrade to Pro ($149–$1500/mo)</a>
-      `;
-    } else {
-   fetch(`/api/check_license?email=${encodeURIComponent(email)}`)
-    .then(r => r.json())
-    .then(data => {
-      if (data.status === "valid") {
+    // Prefer localStorage values
+    const email = localStorage.getItem("license_email") || queryEmail;
+    const licenseKey = localStorage.getItem("license_key") || queryKey;
+
+    async function checkLicense() {
+      if (plan === "practice") {
         content.innerHTML = `
-          <h2>✅ License Active</h2>
-          <p>Your <strong>${plan.toUpperCase()} Plan</strong> is active until:</p>
-          <p><strong>${data.expires_on}</strong></p>
-          <p><code>${data.license_key}</code></p>
-          <a href="RAVA-Installer.exe" class="btn btn-download">⬇️ Download RAVA</a>
-          <p>Need help? Join our trader community:</p>
-          <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
+          <h2>Thank You!</h2>
+          <p>Your <strong>Practice Account version</strong> of RAVA is ready.</p>
+          <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" 
+             class="btn btn-download" target="_blank">⬇️ Download RAVA (Free)</a>
+          <p>Want to trade <strong>live with real capital</strong>? Unlock the full power of RAVA Pro today.</p>
+          <a href="pricing.html" class="btn btn-upgrade">🚀 Upgrade to Pro ($149–$1500/mo)</a>
         `;
-      } else if (data.status === "expired") {
-        content.innerHTML = `
-          <h2>⚠️ License Expired</h2>
-          <p>Your license expired on <strong>${data.expires_on}</strong>.</p>
-          <a href="pricing.html" class="btn btn-upgrade">🔄 Renew Plan</a>
-        `;
-      } else if (data.status === "pending") {
-        content.innerHTML = `
-          <h2>⌛ Payment Pending</h2>
-          <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
-          <p>We will notify you at <strong>${email}</strong> once approved.</p>
-          <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
-        `;
-      } else if (data.status === "rejected") {
-        content.innerHTML = `
-          <h2>❌ Payment Rejected</h2>
-          <p>Unfortunately, your payment could not be verified.</p>
-          <p>Please try again or contact support.</p>
-          <a href="pricing.html" class="btn btn-upgrade">💳 Retry Payment</a>
-          <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
-        `;
-      } else {
+        return;
+      }
+
+      try {
+        let url = `${API_BASE}/check_license?email=${encodeURIComponent(email)}`;
+        if (licenseKey) {
+          url += `&key=${encodeURIComponent(licenseKey)}`;
+        }
+
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.status === "valid") {
+          // Save updated license info
+          localStorage.setItem("license_email", data.email);
+          localStorage.setItem("license_key", data.license_key);
+
+          content.innerHTML = `
+            <h2>✅ License Active</h2>
+            <p>Your <strong>${plan.toUpperCase()} Plan</strong> is active until:</p>
+            <p><strong>${data.expires_on}</strong></p>
+            <p><code>${data.license_key}</code></p>
+            <a href="RAVA-Installer.exe" class="btn btn-download">⬇️ Download RAVA</a>
+            <p>Need help? Join our trader community:</p>
+            <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
+          `;
+        } else if (data.status === "expired") {
+          content.innerHTML = `
+            <h2>⚠️ License Expired</h2>
+            <p>Your license expired on <strong>${data.expires_on}</strong>.</p>
+            <a href="pricing.html" class="btn btn-upgrade">🔄 Renew Plan</a>
+          `;
+        } else if (data.status === "pending") {
+          content.innerHTML = `
+            <h2>⌛ Payment Pending</h2>
+            <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
+            <p>We will notify you at <strong>${email}</strong> once approved.</p>
+            <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
+          `;
+        } else if (data.status === "rejected") {
+          content.innerHTML = `
+            <h2>❌ Payment Rejected</h2>
+            <p>Unfortunately, your payment could not be verified.</p>
+            <p>Please try again or contact support.</p>
+            <a href="pricing.html" class="btn btn-upgrade">💳 Retry Payment</a>
+            <a href="https://t.me/+d8xFrQ_JgyQ0NzY0" class="btn btn-upgrade" target="_blank">💬 Telegram Support</a>
+          `;
+        } else {
+          content.innerHTML = `
+            <h2>❌ Error</h2>
+            <p>${data.message || "We couldn’t verify your license at this time."}</p>
+          `;
+        }
+      } catch (err) {
+        console.error(err);
         content.innerHTML = `
           <h2>❌ Error</h2>
-          <p>${data.message || "We couldn’t verify your license at this time."}</p>
+          <p>We couldn’t verify your license at this time. Please try again later.</p>
         `;
       }
-    });
-    .catch(err => {
-      console.error(err);
-      content.innerHTML = `
-        <h2>❌ Error</h2>
-        <p>We couldn’t verify your license at this time. Please try again later.</p>
-      `;
-    });
-
     }
+
+    // Run on load
+    checkLicense();
   </script>
 </body>
 </html>
-
-
