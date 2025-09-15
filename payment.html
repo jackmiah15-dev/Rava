@@ -155,7 +155,7 @@
         const data = await res.json();
     
         if (data.status === "valid") {
-          // Save license for future requests
+          // ✅ Always save license when it's returned valid
           localStorage.setItem("license_email", data.email);
           localStorage.setItem("license_key", data.license_key);
 
