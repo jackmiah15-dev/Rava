@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard - RAVA</title>
+  <style>
+    body { font-family:'Inter', sans-serif; background:#101413; color:white; text-align:center; padding:60px; }
+    h2 { color:#d4af37; }
+    code { background:#2b2d42; padding:5px 10px; border-radius:5px; }
+  </style>
+</head>
+<body>
+  <div id="content">Loading license info...</div>
+
+  <script>
+    const API_BASE = "https://rava-license-server.onrender.com/api";
+    const params = new URLSearchParams(window.location.search);
+    const email = params.get("email") || localStorage.getItem("license_email");
+    const plan = params.get("plan") || "practice";
+    const content = document.getElementById("content");
+
+    async function loadLicense() {
+      try {
+        const res = await fetch(`${API_BASE}/check_license?email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+
+        if (data.status === "valid") {
+          content.innerHTML = `
+            <h2>✅ License Active</h2>
+            <p>Email: <strong>${email}</strong></p>
+            <p>Plan: <strong>${plan.toUpperCase()}</strong></p>
+            <p>Expires on: <strong>${data.expires_on}</strong></p>
+            <p>License Key: <code>${data.license_key}</code></p>
+            <a href="RAVA-Installer.exe" style="color:#d4af37;">⬇️ Download RAVA</a>
+          `;
+        } else if (data.status === "pending") {
+          content.innerHTML = `<h2>⌛ Pending</h2><p>Approval required. Refreshing automatically...</p>`;
+        } else if (data.status === "expired") {
+          content.innerHTML = `<h2>⚠️ Expired</h2><p>Your license expired on ${data.expires_on}</p>`;
+        } else {
+          content.innerHTML = `<h2>❌ Error</h2><p>${data.message || "No license found"}</p>`;
+        }
+      } catch (e) {
+        content.innerHTML = "<h2>❌ Error</h2><p>Could not connect to server</p>";
+      }
+    }
+
+    loadLicense();
+    setInterval(loadLicense, 30000); // auto-refresh every 30s
+  </script>
+</body>
+</html>
