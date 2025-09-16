@@ -72,6 +72,14 @@
       font-size: 12px;
       color: #aaa;
     }
+    table {
+      margin: 20px auto;
+      border-collapse: collapse;
+      color: #fff;
+      border: 1px solid #d4af37;
+    }
+    th, td { padding: 10px 16px; border: 1px solid #d4af37; }
+    th { background: #2a2d2c; color: #d4af37; }
   </style>
 </head>
 <body>
@@ -83,6 +91,7 @@
     const plan = params.get("plan")?.toLowerCase() || "starter";
     const content = document.getElementById("content");
 
+    // --- UI builders ---
     function paymentScreen(title, price, usdt) {
       return `
         <h2>Complete Your Payment</h2>
@@ -117,6 +126,21 @@
       `;
     }
 
+    function dashboardScreen(user) {
+      return `
+        <h2>📊 Your License Dashboard</h2>
+        <table>
+          <tr><th>Email</th><td>${user.email}</td></tr>
+          <tr><th>License Key</th><td><code>${user.license_key}</code></td></tr>
+          <tr><th>Expires On</th><td>${user.expires_on}</td></tr>
+          <tr><th>Days Remaining</th><td>${user.days_remaining}</td></tr>
+        </table>
+        <br>
+        <a class="btn btn-confirm" href="thankyou.html?plan=${user.plan}&email=${encodeURIComponent(user.email)}">⬇️ Download RAVA</a>
+      `;
+    }
+
+    // --- API functions ---
     async function markPaymentPending(plan, title) {
       const email = prompt("Enter your email (where license will be linked):");
       if (!email) return alert("Email is required to continue.");
@@ -130,13 +154,12 @@
         const data = await res.json();
     
         if (data.status === "pending") {
-          // Save email for later license checks
           localStorage.setItem("license_email", email);
           content.innerHTML = verifyingScreen(title, email, plan);
         } else {
           alert("Error: " + (data.message || "Could not mark payment"));
         }
-      } catch (err) {
+      } catch {
         alert("Network error. Try again.");
       }
     }
@@ -147,25 +170,21 @@
         const licenseKey = localStorage.getItem("license_key");
 
         let url = `${API_BASE}/check_license?email=${encodeURIComponent(savedEmail)}`;
-        if (licenseKey) {
-          url += `&key=${encodeURIComponent(licenseKey)}`;
-        }
+        if (licenseKey) url += `&key=${encodeURIComponent(licenseKey)}`;
 
         const res = await fetch(url);
         const data = await res.json();
     
         if (data.status === "valid") {
-          // ✅ Always save license when it's returned valid
+          // ✅ Save details
           localStorage.setItem("license_email", data.email);
           localStorage.setItem("license_key", data.license_key);
+          localStorage.setItem("expires_on", data.expires_on);
+          localStorage.setItem("days_remaining", data.days_remaining);
 
-          content.innerHTML = `
-            <h2>✅ License Active</h2>
-            <p>Your license is valid until: <span style="color:#d4af37">${data.expires_on}</span></p>
-            <p><code>${data.license_key}</code></p>
-            <a class="btn btn-confirm" href="thankyou.html?plan=${plan}&email=${encodeURIComponent(savedEmail)}">⬇️ Download RAVA</a>
-          `;
+          content.innerHTML = dashboardScreen({ ...data, plan });
         } else if (data.status === "expired") {
+          localStorage.clear();
           content.innerHTML = `
             <h2>⚠️ License Expired</h2>
             <p>Your license expired on <span style="color:#d4af37">${data.expires_on}</span>.</p>
@@ -176,27 +195,41 @@
             <h2>⌛ Payment Pending</h2>
             <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
             <p>We will notify you at <strong>${savedEmail}</strong> once approved.</p>
+            <button class="btn btn-confirm" onclick="checkLicense('${savedEmail}', '${plan}')">🔄 Refresh Status</button>
           `;
         } else if (data.status === "rejected") {
+          localStorage.clear();
           content.innerHTML = `
             <h2>❌ Payment Rejected</h2>
             <p>Unfortunately, your payment could not be verified.</p>
-            <p>Please try again or contact support.</p>
             <a href="pricing.html" class="btn btn-confirm">💳 Retry Payment</a>
           `;
         } else {
           alert("Status: " + data.status + " — " + (data.message || ""));
         }
-      } catch (err) {
+      } catch {
         alert("Error checking license.");
       }
     }
 
-    // Expose to global scope
+    // --- Expose to global scope ---
     window.markPaymentPending = markPaymentPending;
     window.checkLicense = checkLicense;
 
-    // Render plan-specific screen
+    // --- Auto-load dashboard if user already has license ---
+    (function autoLoadDashboard() {
+      const email = localStorage.getItem("license_email");
+      const key = localStorage.getItem("license_key");
+      const exp = localStorage.getItem("expires_on");
+      const days = localStorage.getItem("days_remaining");
+      if (email && key && exp && days > 0) {
+        content.innerHTML = dashboardScreen({
+          email, license_key: key, expires_on: exp, days_remaining: days, plan
+        });
+      }
+    })();
+
+    // --- Initial Render (plan selector) ---
     if (plan === "practice") {
       content.innerHTML = `
         <h2>Practice Mode</h2>
