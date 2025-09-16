@@ -74,12 +74,18 @@
     }
     table {
       margin: 20px auto;
+      color:#fff;
+      border:1px solid #d4af37;
       border-collapse: collapse;
-      color: #fff;
-      border: 1px solid #d4af37;
     }
-    th, td { padding: 10px 16px; border: 1px solid #d4af37; }
-    th { background: #2a2d2c; color: #d4af37; }
+    th, td {
+      border: 1px solid #d4af37;
+      padding: 8px 12px;
+    }
+    th {
+      background: #2a2d2c;
+      color: #d4af37;
+    }
   </style>
 </head>
 <body>
@@ -91,7 +97,27 @@
     const plan = params.get("plan")?.toLowerCase() || "starter";
     const content = document.getElementById("content");
 
-    // --- UI builders ---
+    // --- Render user dashboard (clean + styled) ---
+    function renderUserDashboard(user) {
+      localStorage.setItem("license_email", user.email);
+      localStorage.setItem("license_key", user.license_key);
+      localStorage.setItem("expires_on", user.expires_on);
+      localStorage.setItem("days_remaining", user.days_remaining);
+
+      content.innerHTML = `
+        <h2>📊 Your License Dashboard</h2>
+        <table>
+          <tr><th>Email</th><td>${user.email}</td></tr>
+          <tr><th>License Key</th><td><code>${user.license_key}</code></td></tr>
+          <tr><th>Expires On</th><td>${user.expires_on}</td></tr>
+          <tr><th>Days Remaining</th><td>${user.days_remaining}</td></tr>
+        </table>
+        <br>
+        <a class="btn btn-confirm" href="thankyou.html?plan=${user.plan}&email=${encodeURIComponent(user.email)}">⬇️ Download RAVA</a>
+      `;
+    }
+
+    // --- Payment screen ---
     function paymentScreen(title, price, usdt) {
       return `
         <h2>Complete Your Payment</h2>
@@ -116,6 +142,7 @@
       `;
     }
 
+    // --- Verifying screen ---
     function verifyingScreen(title, email, plan) {
       return `
         <h2>Payment Submitted</h2>
@@ -126,25 +153,11 @@
       `;
     }
 
-    function dashboardScreen(user) {
-      return `
-        <h2>📊 Your License Dashboard</h2>
-        <table>
-          <tr><th>Email</th><td>${user.email}</td></tr>
-          <tr><th>License Key</th><td><code>${user.license_key}</code></td></tr>
-          <tr><th>Expires On</th><td>${user.expires_on}</td></tr>
-          <tr><th>Days Remaining</th><td>${user.days_remaining}</td></tr>
-        </table>
-        <br>
-        <a class="btn btn-confirm" href="thankyou.html?plan=${user.plan}&email=${encodeURIComponent(user.email)}">⬇️ Download RAVA</a>
-      `;
-    }
-
-    // --- API functions ---
+    // --- Mark payment pending ---
     async function markPaymentPending(plan, title) {
       const email = prompt("Enter your email (where license will be linked):");
       if (!email) return alert("Email is required to continue.");
-    
+
       try {
         const res = await fetch(`${API_BASE}/mark_payment_pending`, {
           method: "POST",
@@ -152,37 +165,34 @@
           body: JSON.stringify({ email, plan })
         });
         const data = await res.json();
-    
+
         if (data.status === "pending") {
           localStorage.setItem("license_email", email);
           content.innerHTML = verifyingScreen(title, email, plan);
         } else {
           alert("Error: " + (data.message || "Could not mark payment"));
         }
-      } catch {
+      } catch (err) {
         alert("Network error. Try again.");
       }
     }
-    
+
+    // --- Check license status ---
     async function checkLicense(email, plan) {
       try {
         const savedEmail = localStorage.getItem("license_email") || email;
         const licenseKey = localStorage.getItem("license_key");
 
         let url = `${API_BASE}/check_license?email=${encodeURIComponent(savedEmail)}`;
-        if (licenseKey) url += `&key=${encodeURIComponent(licenseKey)}`;
+        if (licenseKey) {
+          url += `&key=${encodeURIComponent(licenseKey)}`;
+        }
 
         const res = await fetch(url);
         const data = await res.json();
-    
-        if (data.status === "valid") {
-          // ✅ Save details
-          localStorage.setItem("license_email", data.email);
-          localStorage.setItem("license_key", data.license_key);
-          localStorage.setItem("expires_on", data.expires_on);
-          localStorage.setItem("days_remaining", data.days_remaining);
 
-          content.innerHTML = dashboardScreen({ ...data, plan });
+        if (data.status === "valid") {
+          renderUserDashboard(data);
         } else if (data.status === "expired") {
           localStorage.clear();
           content.innerHTML = `
@@ -207,29 +217,34 @@
         } else {
           alert("Status: " + data.status + " — " + (data.message || ""));
         }
-      } catch {
+      } catch (err) {
         alert("Error checking license.");
       }
     }
 
-    // --- Expose to global scope ---
-    window.markPaymentPending = markPaymentPending;
-    window.checkLicense = checkLicense;
-
-    // --- Auto-load dashboard if user already has license ---
+    // --- Auto load saved dashboard if still active ---
     (function autoLoadDashboard() {
       const email = localStorage.getItem("license_email");
-      const key = localStorage.getItem("license_key");
-      const exp = localStorage.getItem("expires_on");
-      const days = localStorage.getItem("days_remaining");
-      if (email && key && exp && days > 0) {
-        content.innerHTML = dashboardScreen({
-          email, license_key: key, expires_on: exp, days_remaining: days, plan
+      const licenseKey = localStorage.getItem("license_key");
+      const expiresOn = localStorage.getItem("expires_on");
+      const daysRemaining = localStorage.getItem("days_remaining");
+
+      if (email && licenseKey && expiresOn && daysRemaining > 0) {
+        renderUserDashboard({
+          email,
+          license_key: licenseKey,
+          expires_on: expiresOn,
+          days_remaining: daysRemaining,
+          plan: plan
         });
       }
     })();
 
-    // --- Initial Render (plan selector) ---
+    // Expose globally
+    window.markPaymentPending = markPaymentPending;
+    window.checkLicense = checkLicense;
+
+    // --- Initial render ---
     if (plan === "practice") {
       content.innerHTML = `
         <h2>Practice Mode</h2>
