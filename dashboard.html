@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #101413;
+      color: #fff;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 700px;
+      margin: 60px auto;
+      padding: 30px;
+      background: #1a1d1c;
+      border-radius: 12px;
+      border: 1px solid #d4af37;
+      text-align: center;
+    }
+    h2 { color: #d4af37; }
+    p { color: #ccc; }
+    .btn {
+      display: inline-block;
+      padding: 12px 20px;
+      margin-top: 20px;
+      background: #d4af37;
+      color: #101413;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="dashboard">
+    <h2>Loading your dashboard...</h2>
+  </div>
+
+  <script>
+    const API_BASE = "https://rava-license-server.onrender.com/api";
+    const dashboard = document.getElementById("dashboard");
+
+    async function loadDashboard() {
+      const email = localStorage.getItem("license_email");
+      const licenseKey = localStorage.getItem("license_key");
+
+      if (!email || !licenseKey) {
+        dashboard.innerHTML = `
+          <h2>Not Logged In</h2>
+          <p>You need to purchase or verify a license first.</p>
+          <a href="pricing.html" class="btn">Go to Pricing</a>
+        `;
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/check_license?email=${encodeURIComponent(email)}&key=${encodeURIComponent(licenseKey)}`);
+        const data = await res.json();
+
+        if (data.status === "valid") {
+          dashboard.innerHTML = `
+            <h2>Welcome back, ${data.email}</h2>
+            <p>Your plan: <strong>${data.plan}</strong></p>
+            <p>License valid until: <span style="color:#d4af37">${data.expires_on}</span></p>
+            <p>License Key: <code>${data.license_key}</code></p>
+            <a href="thankyou.html?plan=${data.plan}&email=${encodeURIComponent(data.email)}" class="btn">⬇️ Download RAVA</a>
+          `;
+        } else if (data.status === "expired") {
+          dashboard.innerHTML = `
+            <h2>⚠️ License Expired</h2>
+            <p>Your license expired on ${data.expires_on}.</p>
+            <a href="pricing.html" class="btn">🔄 Renew Plan</a>
+          `;
+        } else {
+          dashboard.innerHTML = `
+            <h2>⚠️ No Active License</h2>
+            <p>Status: ${data.status}</p>
+            <a href="pricing.html" class="btn">Choose a Plan</a>
+          `;
+        }
+      } catch (err) {
+        dashboard.innerHTML = `
+          <h2>Error</h2>
+          <p>Could not load your dashboard. Try again later.</p>
+        `;
+      }
+    }
+
+    loadDashboard();
+  </script>
+</body>
+</html>
