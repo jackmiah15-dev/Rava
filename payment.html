@@ -1,3 +1,5 @@
+I have just realized that we are tryingt o fix the wrong code
+this is what we should be looking at since its the code which contains the Chck license status 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -145,31 +147,25 @@
       try {
         const savedEmail = localStorage.getItem("license_email") || email;
         const licenseKey = localStorage.getItem("license_key");
-    
-        if (!savedEmail) {
-          content.innerHTML = `
-            <h2>❌ No Email Found</h2>
-            <p>Please go back and enter your email before checking license.</p>
-          `;
-          return;
-        }
-    
+
         let url = `${API_BASE}/check_license?email=${encodeURIComponent(savedEmail)}`;
-        if (licenseKey) url += `&key=${encodeURIComponent(licenseKey)}`;
-    
+        if (licenseKey) {
+          url += `&key=${encodeURIComponent(licenseKey)}`;
+        }
+
         const res = await fetch(url);
         const data = await res.json();
     
         if (data.status === "valid") {
+          // ✅ Always save license when it's returned valid
           localStorage.setItem("license_email", data.email);
           localStorage.setItem("license_key", data.license_key);
-    
+
           content.innerHTML = `
             <h2>✅ License Active</h2>
             <p>Your license is valid until: <span style="color:#d4af37">${data.expires_on}</span></p>
             <p><code>${data.license_key}</code></p>
-            <a class="btn btn-confirm" href="RAVA-Installer.exe">⬇️ Download RAVA</a>
-            <p><a href="https://t.me/+d8xFrQ_JgyQ0NzY0" target="_blank">💬 Telegram Support</a></p>
+            <a class="btn btn-confirm" href="thankyou.html?plan=${plan}&email=${encodeURIComponent(savedEmail)}">⬇️ Download RAVA</a>
           `;
         } else if (data.status === "expired") {
           content.innerHTML = `
@@ -181,35 +177,21 @@
           content.innerHTML = `
             <h2>⌛ Payment Pending</h2>
             <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
-            <p>We’ll notify you at <strong>${savedEmail}</strong> once approved.</p>
-            <p><button class="btn btn-confirm" onclick="checkLicense('${savedEmail}', '${plan}')">🔄 Refresh Now</button></p>
+            <p>We will notify you at <strong>${savedEmail}</strong> once approved.</p>
           `;
-          setTimeout(() => checkLicense(savedEmail, plan), 30000); // auto-refresh
-        } else if (data.status === "rejected" || data.status === "invalid") {
+        } else if (data.status === "rejected") {
           content.innerHTML = `
             <h2>❌ Payment Rejected</h2>
-            <p>${data.message || "Your payment could not be verified."}</p>
+            <p>Unfortunately, your payment could not be verified.</p>
+            <p>Please try again or contact support.</p>
             <a href="pricing.html" class="btn btn-confirm">💳 Retry Payment</a>
           `;
         } else {
-          content.innerHTML = `
-            <h2>❌ Error</h2>
-            <p>${data.message || "Unexpected response from server."}</p>
-          `;
+          alert("Status: " + data.status + " — " + (data.message || ""));
         }
       } catch (err) {
-        console.error(err);
-        content.innerHTML = `
-          <h2>❌ Error</h2>
-          <p>Could not connect to the license server. Please try again later.</p>
-        `;
+        alert("Error checking license.");
       }
-    }
-    
-    // ✅ Auto-check license on page load if we already have an email
-    const savedEmail = localStorage.getItem("license_email");
-    if (savedEmail && plan !== "practice") {
-      checkLicense(savedEmail, plan);
     }
 
     // Expose to global scope
