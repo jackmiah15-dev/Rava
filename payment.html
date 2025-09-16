@@ -178,6 +178,7 @@
     }
 
     // --- Check license status ---
+    // --- Check license status ---
     async function checkLicense(email, plan) {
       try {
         const savedEmail = localStorage.getItem("license_email") || email;
@@ -185,9 +186,10 @@
     
         // Always start with just email
         let url = `${API_BASE}/check_license?email=${encodeURIComponent(savedEmail)}`;
-        
-    
-
+         // Only include license key if we actually have one
+        if (licenseKey && licenseKey.length > 5) {
+          url += `&key=${encodeURIComponent(licenseKey)}`;
+        }
     
         const res = await fetch(url);
         const data = await res.json();
@@ -199,7 +201,8 @@
           localStorage.setItem("expires_on", data.expires_on);
           localStorage.setItem("days_remaining", data.days_remaining);
     
-          content.innerHTML = dashboardScreen({ ...data, plan });
+          // ✅ Render the dashboard correctly
+          renderUserDashboard({ ...data, plan });
         } 
         else if (data.status === "expired") {
           localStorage.clear();
@@ -232,6 +235,7 @@
         alert("Error checking license.");
       }
     }
+
 
 
     // --- Auto load saved dashboard if still active ---
