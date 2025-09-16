@@ -182,45 +182,59 @@
       try {
         const savedEmail = localStorage.getItem("license_email") || email;
         const licenseKey = localStorage.getItem("license_key");
-
+    
+        // Always start with just email
         let url = `${API_BASE}/check_license?email=${encodeURIComponent(savedEmail)}`;
-        if (licenseKey) {
+    
+        // Only include license key if we actually have one
+        if (licenseKey && licenseKey.length > 5) {
           url += `&key=${encodeURIComponent(licenseKey)}`;
         }
-
+    
         const res = await fetch(url);
         const data = await res.json();
-
+    
         if (data.status === "valid") {
-          renderUserDashboard(data);
-        } else if (data.status === "expired") {
+          // ✅ Save details
+          localStorage.setItem("license_email", data.email);
+          localStorage.setItem("license_key", data.license_key);
+          localStorage.setItem("expires_on", data.expires_on);
+          localStorage.setItem("days_remaining", data.days_remaining);
+    
+          content.innerHTML = dashboardScreen({ ...data, plan });
+        } 
+        else if (data.status === "expired") {
           localStorage.clear();
           content.innerHTML = `
             <h2>⚠️ License Expired</h2>
             <p>Your license expired on <span style="color:#d4af37">${data.expires_on}</span>.</p>
             <a href="pricing.html" class="btn btn-confirm">🔄 Renew Plan</a>
           `;
-        } else if (data.status === "pending") {
+        } 
+        else if (data.status === "pending") {
           content.innerHTML = `
             <h2>⌛ Payment Pending</h2>
             <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
             <p>We will notify you at <strong>${savedEmail}</strong> once approved.</p>
             <button class="btn btn-confirm" onclick="checkLicense('${savedEmail}', '${plan}')">🔄 Refresh Status</button>
           `;
-        } else if (data.status === "rejected") {
+        } 
+        else if (data.status === "rejected") {
           localStorage.clear();
           content.innerHTML = `
             <h2>❌ Payment Rejected</h2>
             <p>Unfortunately, your payment could not be verified.</p>
             <a href="pricing.html" class="btn btn-confirm">💳 Retry Payment</a>
           `;
-        } else {
+        } 
+        else {
           alert("Status: " + data.status + " — " + (data.message || ""));
         }
-      } catch (err) {
+      } catch {
         alert("Error checking license.");
       }
     }
+
 
     // --- Auto load saved dashboard if still active ---
     (function autoLoadDashboard() {
