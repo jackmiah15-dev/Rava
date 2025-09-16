@@ -91,188 +91,170 @@
 <body>
   <div class="container" id="content"></div>
 
-  <script>
-    const API_BASE = "https://rava-license-server.onrender.com/api";
-    const params = new URLSearchParams(window.location.search);
-    const plan = params.get("plan")?.toLowerCase() || "starter";
-    const content = document.getElementById("content");
+<script>
+  const API_BASE = "https://rava-license-server.onrender.com/api";
+  const params = new URLSearchParams(window.location.search);
+  const plan = params.get("plan")?.toLowerCase() || "starter";
+  const content = document.getElementById("content");
 
-    // --- Render user dashboard (clean + styled) ---
-    function renderUserDashboard(user) {
-      localStorage.setItem("license_email", user.email);
-      localStorage.setItem("license_key", user.license_key);
-      localStorage.setItem("expires_on", user.expires_on);
-      localStorage.setItem("days_remaining", user.days_remaining);
+  // --- Render user dashboard (clean + styled) ---
+  function renderUserDashboard(user) {
+    localStorage.setItem("license_email", user.email);
+    localStorage.setItem("license_key", user.license_key);
+    localStorage.setItem("expires_on", user.expires_on);
+    localStorage.setItem("days_remaining", user.days_remaining);
 
-      content.innerHTML = `
-        <h2>📊 Your License Dashboard</h2>
-        <table>
-          <tr><th>Email</th><td>${user.email}</td></tr>
-          <tr><th>License Key</th><td><code>${user.license_key}</code></td></tr>
-          <tr><th>Expires On</th><td>${user.expires_on}</td></tr>
-          <tr><th>Days Remaining</th><td>${user.days_remaining}</td></tr>
-        </table>
-        <br>
-        <a class="btn btn-confirm" href="thankyou.html?plan=${user.plan}&email=${encodeURIComponent(user.email)}">⬇️ Download RAVA</a>
-      `;
-    }
+    content.innerHTML = `
+      <h2>📊 Your License Dashboard</h2>
+      <table>
+        <tr><th>Email</th><td>${user.email}</td></tr>
+        <tr><th>License Key</th><td><code>${user.license_key}</code></td></tr>
+        <tr><th>Expires On</th><td>${user.expires_on}</td></tr>
+        <tr><th>Days Remaining</th><td>${user.days_remaining}</td></tr>
+      </table>
+      <br>
+      <a class="btn btn-confirm" href="thankyou.html?plan=${user.plan}&email=${encodeURIComponent(user.email)}">⬇️ Download RAVA</a>
+    `;
+  }
 
-    // --- Payment screen ---
-    function paymentScreen(title, price, usdt) {
-      return `
-        <h2>Complete Your Payment</h2>
-        <p>You selected the <strong>${title}</strong> plan  
-        (<span style="color:#d4af37">${price}</span> per month).  
-        Please complete payment below:</p>
+  // --- Payment screen ---
+  function paymentScreen(title, price, usdt) {
+    return `
+      <h2>Complete Your Payment</h2>
+      <p>You selected the <strong>${title}</strong> plan  
+      (<span style="color:#d4af37">${price}</span> per month).  
+      Please complete payment below:</p>
 
-        <div class="method">
-          <h3>💳 Option 1: Binance Pay (Recommended)</h3>
-          <p>Send <strong>${usdt} USDT (TRC20)</strong> to:</p>
-          <code>YOUR-BINANCE-PAY-ID</code>
-        </div>
+      <div class="method">
+        <h3>💳 Option 1: Binance Pay (Recommended)</h3>
+        <p>Send <strong>${usdt} USDT (TRC20)</strong> to:</p>
+        <code>YOUR-BINANCE-PAY-ID</code>
+      </div>
 
-        <div class="method">
-          <h3>💳 Option 2: Advcash</h3>
-          <p>Send <strong>${price}</strong> to this wallet:</p>
-          <code>YOUR-ADVCASH-WALLET</code>
-        </div>
+      <div class="method">
+        <h3>💳 Option 2: Advcash</h3>
+        <p>Send <strong>${price}</strong> to this wallet:</p>
+        <code>YOUR-ADVCASH-WALLET</code>
+      </div>
 
-        <button class="btn btn-confirm" onclick="markPaymentPending('${plan}', '${title}')">✅ I Have Paid</button>
-        <small>After payment, keep your transaction ID for verification.</small>
-      `;
-    }
+      <button class="btn btn-confirm" onclick="markPaymentPending('${plan}', '${title}')">✅ I Have Paid</button>
+      <small>After payment, keep your transaction ID for verification.</small>
+    `;
+  }
 
-    // --- Verifying screen ---
-    function verifyingScreen(title, email, plan) {
-      return `
-        <h2>Payment Submitted</h2>
-        <p>Thanks for choosing the <strong>${title}</strong> plan.<br>
-        Your payment has been marked as <span style="color:#d4af37">pending verification</span>.</p>
-        <p>We’ll confirm and issue your license key shortly (usually within 24 hours).</p>
-        <button class="btn btn-confirm" onclick="checkLicense('${email}', '${plan}')">🔑 Check License Status</button>
-      `;
-    }
+  // --- Verifying screen ---
+  function verifyingScreen(title, email, plan) {
+    return `
+      <h2>Payment Submitted</h2>
+      <p>Thanks for choosing the <strong>${title}</strong> plan.<br>
+      Your payment has been marked as <span style="color:#d4af37">pending verification</span>.</p>
+      <p>We’ll confirm and issue your license key shortly (usually within 24 hours).</p>
+      <button class="btn btn-confirm" onclick="checkLicense('${email}', '${plan}')">🔑 Check License Status</button>
+    `;
+  }
 
-    // --- Mark payment pending ---
-    async function markPaymentPending(plan, title) {
-      const email = prompt("Enter your email (where license will be linked):");
-      if (!email) return alert("Email is required to continue.");
+  // --- Mark payment pending ---
+  async function markPaymentPending(plan, title) {
+    const email = prompt("Enter your email (where license will be linked):");
+    if (!email) return alert("Email is required to continue.");
 
-      try {
-        const res = await fetch(`${API_BASE}/mark_payment_pending`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, plan })
-        });
-        const data = await res.json();
+    try {
+      const res = await fetch(`${API_BASE}/mark_payment_pending`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, plan })
+      });
+      const data = await res.json();
 
-        if (data.status === "pending") {
-          localStorage.setItem("license_email", email);
-          content.innerHTML = verifyingScreen(title, email, plan);
-        } else {
-          alert("Error: " + (data.message || "Could not mark payment"));
-        }
-      } catch (err) {
-        alert("Network error. Try again.");
+      if (data.status === "pending") {
+        localStorage.setItem("license_email", email);
+        content.innerHTML = verifyingScreen(title, email, plan);
+      } else {
+        alert("Error: " + (data.message || "Could not mark payment"));
       }
+    } catch (err) {
+      alert("Network error. Try again.");
     }
+  }
 
-    // --- Check license status ---
-    // --- Check license status ---
-    async function checkLicense(email, plan) {
-      try {
-        const savedEmail = localStorage.getItem("license_email") || email;
-        const licenseKey = localStorage.getItem("license_key");
-    
-        // Always start with just email
-        let url = `${API_BASE}/check_license?email=${encodeURIComponent(savedEmail)}`;
-         // Only include license key if we actually have one
-        if (licenseKey && licenseKey.length > 5) {
-          url += `&key=${encodeURIComponent(licenseKey)}`;
-        }
-    
-        const res = await fetch(url);
-        const data = await res.json();
-    
-        if (data.status === "valid") {
-          // ✅ Save details
-          localStorage.setItem("license_email", data.email);
-          localStorage.setItem("license_key", data.license_key);
-          localStorage.setItem("expires_on", data.expires_on);
-          localStorage.setItem("days_remaining", data.days_remaining);
-    
-          // ✅ Render the dashboard correctly
-          renderUserDashboard({ ...data, plan });
-        } 
-        else if (data.status === "expired") {
-          localStorage.clear();
-          content.innerHTML = `
-            <h2>⚠️ License Expired</h2>
-            <p>Your license expired on <span style="color:#d4af37">${data.expires_on}</span>.</p>
-            <a href="pricing.html" class="btn btn-confirm">🔄 Renew Plan</a>
-          `;
-        } 
-        else if (data.status === "pending") {
-          content.innerHTML = `
-            <h2>⌛ Payment Pending</h2>
-            <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
-            <p>We will notify you at <strong>${savedEmail}</strong> once approved.</p>
-            <button class="btn btn-confirm" onclick="checkLicense('${savedEmail}', '${plan}')">🔄 Refresh Status</button>
-          `;
-        } 
-        else if (data.status === "rejected") {
-          localStorage.clear();
-          content.innerHTML = `
-            <h2>❌ Payment Rejected</h2>
-            <p>Unfortunately, your payment could not be verified.</p>
-            <a href="pricing.html" class="btn btn-confirm">💳 Retry Payment</a>
-          `;
-        } 
-        else {
-          alert("Status: " + data.status + " — " + (data.message || ""));
-        }
-      } catch {
-        alert("Error checking license.");
+  // --- Check license status ---
+  async function checkLicense(email, plan) {
+    try {
+      const savedEmail = localStorage.getItem("license_email") || email;
+      if (!savedEmail) {
+        return alert("No email found. Please enter your email again.");
       }
-    }
 
+      let url = `${API_BASE}/check_license?email=${encodeURIComponent(savedEmail)}`;
+      const res = await fetch(url);
+      const data = await res.json();
 
+      if (data.status === "valid") {
+        localStorage.setItem("license_email", data.email);
+        localStorage.setItem("license_key", data.license_key);
+        localStorage.setItem("expires_on", data.expires_on);
+        localStorage.setItem("days_remaining", data.days_remaining);
 
-    // --- Auto load saved dashboard if still active ---
-    (function autoLoadDashboard() {
-      const email = localStorage.getItem("license_email");
-      const licenseKey = localStorage.getItem("license_key");
-      const expiresOn = localStorage.getItem("expires_on");
-      const daysRemaining = localStorage.getItem("days_remaining");
-
-      if (email && licenseKey && expiresOn && daysRemaining > 0) {
-        renderUserDashboard({
-          email,
-          license_key: licenseKey,
-          expires_on: expiresOn,
-          days_remaining: daysRemaining,
-          plan: plan
-        });
+        renderUserDashboard({ ...data, plan });
       }
-    })();
-
-    // Expose globally
-    window.markPaymentPending = markPaymentPending;
-    window.checkLicense = checkLicense;
-
-    // --- Initial render ---
-    if (plan === "practice") {
-      content.innerHTML = `
-        <h2>Practice Mode</h2>
-        <p>The <strong>Practice Plan</strong> is <span style="color:#d4af37">free</span>.  
-        No payment required — start right away.</p>
-        <a class="btn btn-confirm" href="thankyou.html?plan=practice">🚀 Continue to Download</a>
-      `;
-    } else if (plan === "starter") {
-      content.innerHTML = paymentScreen("Live Starter Plan", "$149", "149");
-    } else if (plan === "pro") {
-      content.innerHTML = paymentScreen("Pro Trader Plan", "$1500", "1500");
+      else if (data.status === "expired") {
+        localStorage.clear();
+        content.innerHTML = `
+          <h2>⚠️ License Expired</h2>
+          <p>Your license expired on <span style="color:#d4af37">${data.expires_on}</span>.</p>
+          <a href="pricing.html" class="btn btn-confirm">🔄 Renew Plan</a>
+        `;
+      }
+      else if (data.status === "pending") {
+        content.innerHTML = `
+          <h2>⌛ Payment Pending</h2>
+          <p>Your payment for the <strong>${plan.toUpperCase()} Plan</strong> is still being verified.</p>
+          <p>We will notify you at <strong>${savedEmail}</strong> once approved.</p>
+          <button class="btn btn-confirm" onclick="checkLicense('${savedEmail}', '${plan}')">🔄 Refresh Status</button>
+        `;
+      }
+      else if (data.status === "rejected") {
+        localStorage.clear();
+        content.innerHTML = `
+          <h2>❌ Payment Rejected</h2>
+          <p>Unfortunately, your payment could not be verified.</p>
+          <a href="pricing.html" class="btn btn-confirm">💳 Retry Payment</a>
+        `;
+      }
+      else {
+        alert("Status: " + data.status + " — " + (data.message || ""));
+      }
+    } catch (err) {
+      alert("Error checking license.");
     }
-  </script>
+  }
+
+  // --- Auto load dashboard: re-check server on load ---
+  (async function autoLoadDashboard() {
+    const email = localStorage.getItem("license_email");
+    if (email) {
+      await checkLicense(email, plan); // 🔑 always re-verify with backend
+    }
+  })();
+
+  // Expose globally
+  window.markPaymentPending = markPaymentPending;
+  window.checkLicense = checkLicense;
+
+  // --- Initial render ---
+  if (plan === "practice") {
+    content.innerHTML = `
+      <h2>Practice Mode</h2>
+      <p>The <strong>Practice Plan</strong> is <span style="color:#d4af37">free</span>.  
+      No payment required — start right away.</p>
+      <a class="btn btn-confirm" href="thankyou.html?plan=practice">🚀 Continue to Download</a>
+    `;
+  } else if (plan === "starter") {
+    content.innerHTML = paymentScreen("Live Starter Plan", "$149", "149");
+  } else if (plan === "pro") {
+    content.innerHTML = paymentScreen("Pro Trader Plan", "$1500", "1500");
+  }
+</script>
+
 </body>
 </html>
