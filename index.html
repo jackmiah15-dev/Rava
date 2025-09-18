@@ -1,31 +1,13 @@
+here is where we need to make that adjustment
 <!doctype html>
-<html lang="en"><head>
+<html lang="en">
+<head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>RAVA — AI TRADER</title>
-
-  <!-- Favicon (browser tab) -->
-  <link rel="icon" type="image/x-icon" href="rava_icon.ico" />
-  <link rel="shortcut icon" type="image/x-icon" href="rava_logo.ico" />
-
-  <!-- Apple Touch Icon (iOS / Android home screen) -->
-  <link rel="apple-touch-icon" sizes="180x180" href="rava_logo_180.png" />
-  <link rel="apple-touch-icon" sizes="152x152" href="rava_logo_152.png" />
-  <link rel="apple-touch-icon" sizes="120x120" href="rava_logo_120.png" />
-
-  <!-- Android / Chrome Icons -->
-  <link rel="icon" type="image/png" sizes="192x192" href="rava_logo_192.png" />
-  <link rel="icon" type="image/png" sizes="512x512" href="rava_logo_512.png" />
-
-  <!-- Theme color (mobile browsers UI color) -->
-  <meta name="theme-color" content="#0f1415" />
-
+  <title>RAVA — Automated IQ Option Trading</title>
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
-
-  <!-- Description -->
   <meta name="description" content="RAVA automates IQ Option trades with disciplined compounding and a lightweight secure interface. Practice free — upgrade to Live Pro for advanced features." />
-
   <style>
     :root{
       --bg:#0f1415;
@@ -53,35 +35,17 @@
     }
 
     /* Container */
-    .wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+    .wrap{max-width:var(--max);margin:36px auto;padding:28px}
 
-    /* HEADER / TOP NAV */
-    header{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:14px 32px;
-      background:#0f1415;
-      border-bottom:1px solid rgba(255,255,255,0.08);
-      position:sticky;
-      top:0;
-      z-index:1000;
-    }
+    header{display:flex;align-items:center;gap:18px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(212,175,55,0.06), transparent);border:1px solid rgba(212,175,55,0.08)}
     .logo{display:flex;align-items:center;gap:14px}
-    .logo img{width:48px;height:48px;border-radius:12px;background:#fff;padding:4px;object-fit:cover}
+    .logo img{width:62px;height:62px;border-radius:12px;background:#fff;padding:6px;object-fit:cover}
     .brand{display:flex;flex-direction:column}
-    .brand h1{font-family:'Playfair Display', serif;color:var(--accent);font-size:18px;margin:0}
-    .brand p{margin:0;color:var(--muted);font-size:12px}
-
-    nav{display:flex;gap:20px;align-items:center}
-    nav a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .2s}
-    nav a:hover{color:#fff}
-
-    .btn{background:var(--accent);color:#071012;padding:10px 14px;border-radius:8px;text-decoration:none;font-weight:700;border:none;cursor:pointer}
-    .btn.secondary{background:transparent;color:#e9eef0;border:1px solid rgba(255,255,255,0.06)}
+    .brand h1{font-family:'Playfair Display', serif;color:var(--accent);font-size:20px;margin:0}
+    .brand p{margin:0;color:var(--muted);font-size:13px}
 
     /* HERO */
-    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin-top:36px}
+    .hero{display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center;margin-top:22px}
     .hero-left{padding:28px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
     .kicker{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:1.4px}
     .headline{font-family:'Playfair Display',serif;font-size:34px;color:#fff;margin:12px 0 8px}
@@ -89,7 +53,10 @@
     .benefits{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
     .benefits .item{display:flex;gap:12px;align-items:flex-start}
     .chip{background:var(--glass);padding:8px;border-radius:10px;font-weight:600;color:var(--accent);width:46px;text-align:center}
+
     .cta-group{display:flex;gap:12px;align-items:center}
+    .btn{background:var(--accent);color:#071012;padding:12px 16px;border-radius:10px;text-decoration:none;font-weight:700;border:none;cursor:pointer}
+    .btn.secondary{background:transparent;color:#e9eef0;border:1px solid rgba(255,255,255,0.06)}
     .micro{font-size:13px;color:var(--muted)}
 
     /* Right card */
@@ -125,6 +92,15 @@
 
     footer{margin-top:36px;text-align:center;color:var(--muted);font-size:13px}
 
+    /* Modal */
+    .modal-back{position:fixed;inset:0;background:rgba(2,6,8,0.6);display:none;align-items:center;justify-content:center;padding:18px}
+    .modal{background:linear-gradient(180deg,#0b0f10,#0f1415);padding:20px;border-radius:12px;width:100%;max-width:520px;border:1px solid rgba(255,255,255,0.04)}
+    .modal h3{margin:0 0 10px}
+    .field{display:flex;flex-direction:column;margin-bottom:12px}
+    .field label{font-size:13px;color:var(--muted);margin-bottom:6px}
+    .field input, .field select {padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:#e9eef0}
+    .success{background:linear-gradient(90deg, rgba(212,175,55,0.14), rgba(212,175,55,0.06));padding:12px;border-radius:10px;color:var(--accent-2)}
+
     @media (max-width:980px){
       .hero{grid-template-columns:1fr}
       .features{grid-template-columns:repeat(2,1fr)}
@@ -132,77 +108,167 @@
     }
     @media (max-width:520px){
       .features{grid-template-columns:1fr}
-      nav{display:none} /* hide nav on small screens */
     }
+
   </style>
 </head>
 <body>
-  <header>
-    <div class="logo">
-      <img src="rava_logo.jpg" alt="RAVA logo" />
-      <div class="brand">
-        <h1>RAVA</h1>
-        <p>Automated IQ Option trading — disciplined compounding</p>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:16px;align-items:center">
-      <nav>
-        <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#faq">FAQ</a>
-      </nav>
-      <button class="btn" onclick="openModal()">Get Early Access</button>
-    </div>
-  </header>
-
   <div class="wrap">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-left">
-        <div class="kicker">Backtested • Secure • Practice-first</div>
-        <h2 class="headline">Automate your IQ Option trades with disciplined compounding</h2>
-        <p class="sub">RAVA removes emotion from execution and applies strict money management so you scale consistently. Start in Practice Mode (free) — upgrade to Live Pro when you’re ready.</p>
-
-        <div class="benefits">
-          <div class="item"><div class="chip">1</div><div><strong>Trade without emotion</strong><div class="micro">Automated execution removes hesitation and impulsive orders.</div></div></div>
-          <div class="item"><div class="chip">2</div><div><strong>Compound with discipline</strong><div class="micro">Built-in money management reduces drawdowns and normalizes growth.</div></div></div>
-          <div class="item"><div class="chip">3</div><div><strong>Practice to Live</strong><div class="micro">Seamless switch from Practice account to Live trading when you’re ready.</div></div></div>
+    <header>
+      <div class="logo">
+        <img src="rava_logo.jpg" alt="RAVA logo" />
+        <div class="brand">
+          <h1>RAVA</h1>
+          <p>Automated IQ Option trading — disciplined compounding</p>
         </div>
-
-        <div class="cta-group">
-          <button class="btn" onclick="openModal()">Get Early Access</button>
-          <a class="btn secondary" href="#pricing">See pricing</a>
-          <div style="margin-left:auto;color:var(--muted);font-size:13px">No credit card • 14-day trial</div>
-        </div>
-
-        <div style="margin-top:18px;color:var(--muted);font-size:13px">Trusted by traders worldwide — start risk-free in Practice Mode.</div>
       </div>
+      <div style="margin-left:auto;display:flex;gap:10px;align-items:center">
+        <nav style="display:flex;gap:14px;align-items:center">
+          <a href="#features" style="color:var(--muted);text-decoration:none;font-size:14px">Features</a>
+          <a href="#pricing" style="color:var(--muted);text-decoration:none;font-size:14px">Pricing</a>
+          <a href="#faq" style="color:var(--muted);text-decoration:none;font-size:14px">FAQ</a>
+        </nav>
+        <button class="btn" onclick="openModal()">Get Early Access</button>
+      </div>
+    </header>
 
-      <aside class="card">
-        <h3>Snapshot</h3>
-        <div class="stat">
-          <div class="num">+38%</div>
-          <div>
-            <div style="font-weight:700">Avg. monthly qualified pipeline</div>
-            <div class="small">(sample: active Pro traders)</div>
+    <main>
+      <section class="hero">
+        <div class="hero-left">
+          <div class="kicker">Backtested • Secure • Practice-first</div>
+          <h2 class="headline">Automate your IQ Option trades with disciplined compounding</h2>
+          <p class="sub">RAVA removes emotion from execution and applies strict money management so you scale consistently. Start in Practice Mode (free) — upgrade to Live Pro when you’re ready.</p>
+
+          <div class="benefits">
+            <div class="item"><div class="chip">1</div><div><strong>Trade without emotion</strong><div class="micro">Automated execution removes hesitation and impulsive orders.</div></div></div>
+            <div class="item"><div class="chip">2</div><div><strong>Compound with discipline</strong><div class="micro">Built-in money management reduces drawdowns and normalizes growth.</div></div></div>
+            <div class="item"><div class="chip">3</div><div><strong>Practice to Live</strong><div class="micro">Seamless switch from Practice account to Live trading when you’re ready.</div></div></div>
           </div>
+
+          <div class="cta-group">
+            <button class="btn" onclick="openModal()">Get Early Access</button>
+            <a class="btn secondary" href="#pricing">See pricing</a>
+            <div style="margin-left:auto;color:var(--muted);font-size:13px">No credit card • 14-day trial</div>
+          </div>
+
+          <div style="margin-top:18px;color:var(--muted);font-size:13px">Trusted by traders worldwide — start risk-free in Practice Mode.</div>
         </div>
 
-        <div style="margin-top:14px">
-          <h4 style="margin:0 0 6px">Quick Setup</h4>
-          <p class="small" style="margin:0">Install, connect your IQ Option Practice account, and run RAVA in <strong>under 10 minutes</strong>.</p>
+        <aside class="card">
+          <h3>Snapshot</h3>
+          <div class="stat">
+            <div class="num">+38%</div>
+            <div>
+              <div style="font-weight:700">Avg. monthly qualified pipeline</div>
+              <div class="small">(sample: active Pro traders)</div>
+            </div>
+          </div>
+
+          <div style="margin-top:14px">
+            <h4 style="margin:0 0 6px">Quick Setup</h4>
+            <p class="small" style="margin:0">Install, connect your IQ Option Practice account, and run RAVA in <strong>under 10 minutes</strong>.</p>
+          </div>
+
+          <div style="margin-top:16px">
+            <h4 style="margin:0 0 6px">Security</h4>
+            <p class="small" style="margin:0">RAVA only automates trade signals via the broker API — we never custody funds. Use a dedicated practice account first.</p>
+          </div>
+
+        </aside>
+      </section>
+
+      <section id="features" class="features">
+        <div class="feature">
+          <h4>Automatic trade execution</h4>
+          <p>Execute strategies with millisecond precision. No manual clicks, no hesitation.</p>
+        </div>
+        <div class="feature">
+          <h4>Compound money management</h4>
+          <p>Built-in compounding rules and stop-loss management to protect capital.</p>
+        </div>
+        <div class="feature">
+          <h4>Practice & Live support</h4>
+          <p>Test strategies in Practice Mode and switch to Live once you’re confident.</p>
+        </div>
+      </section>
+
+      <section id="pricing" class="pricing">
+        <div class="plan">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <strong>Practice (Free)</strong>
+              <div class="small">Unlimited practice trading • Good for learning</div>
+            </div>
+            <div class="price">$0</div>
+          </div>
+          <ul>
+            <li>Automated execution on Practice account</li>
+            <li>Basic compounding rules</li>
+            <li>Email support</li>
+          </ul>
+          <div style="margin-top:12px"><button class="btn" onclick="openModal('Practice')">Start Practice</button></div>
         </div>
 
-        <div style="margin-top:16px">
-          <h4 style="margin:0 0 6px">Security</h4>
-          <p class="small" style="margin:0">RAVA only automates trade signals via the broker API — we never custody funds. Use a dedicated practice account first.</p>
+        <div class="plan popular">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <strong>Live Starter</strong>
+              <div class="small">For active traders starting live automation</div>
+            </div>
+            <div class="price">$149<span style="font-size:13px;color:var(--muted)">/mo</span></div>
+          </div>
+          <ul>
+            <li>Live account support (limited trades)</li>
+            <li>Priority email support</li>
+            <li>Monthly performance review</li>
+          </ul>
+          <div style="margin-top:12px"><button class="btn" onclick="openModal('Live Starter')">Get Live Starter</button></div>
         </div>
-      </aside>
-    </section>
 
-    <!-- FEATURES, PRICING, TESTIMONIALS, FAQ (same as before) -->
-    <!-- ... keep your sections unchanged here ... -->
+        <div class="plan">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <strong>Pro Trader</strong>
+              <div class="small">Advanced controls for professional traders</div>
+            </div>
+            <div class="price">$1,500<span style="font-size:13px;color:var(--muted)">/mo</span></div>
+          </div>
+          <ul>
+            <li>Unlimited live trades & premium support</li>
+            <li>Advanced risk controls & custom scripts</li>
+            <li>Dedicated onboarding session</li>
+          </ul>
+          <div style="margin-top:12px"><button class="btn" onclick="openModal('Pro Trader')">Apply for Pro</button></div>
+        </div>
+      </section>
+
+      <section class="testimonials">
+        <h3 style="margin:0;color:#fff">What traders say</h3>
+        <div class="test">
+          <p>"RAVA removed the emotional noise from my trading. I moved from inconsistent wins to a measurable, repeatable strategy."</p>
+          <div class="by">— A. Mwangi, Nairobi — Active Pro</div>
+        </div>
+        <div class="test">
+          <p>"The practice mode let me tune my strategy safely. When I switched to Live Starter, results were predictable and scaled."</p>
+          <div class="by">— R. Chen, Singapore — Live Starter</div>
+        </div>
+      </section>
+
+      <section id="faq" class="faq">
+        <h3 style="margin-top:18px">FAQ</h3>
+        <dl>
+          <dt>Is RAVA guaranteed to make money?</dt>
+          <dd>No. Trading carries risk. RAVA automates execution and enforces discipline — it does not guarantee profits. Start in Practice Mode.</dd>
+
+          <dt>How do I connect to IQ Option?</dt>
+          <dd>Use your IQ Option Practice account credentials and follow the guided setup. RAVA does not custody funds.</dd>
+
+          <dt>Do you offer refunds?</dt>
+          <dd>We offer a 14-day trial on paid plans. Contact support for refund requests during this period.</dd>
+        </dl>
+      </section>
+
+    </main>
 
     <footer>
       <div style="max-width:700px;margin:20px auto;color:var(--muted)">
@@ -211,7 +277,7 @@
           <a href="#" style="color:var(--muted);text-decoration:none">Terms</a>
           <a href="#" style="color:var(--muted);text-decoration:none">Support</a>
         </div>
-        &copy; 2025 RAVA Project. All rights reserved.
+        &copy; 2025 RAVA Project.. All rights reserved.
       </div>
     </footer>
   </div>
@@ -247,12 +313,13 @@
       </form>
 
       <div id="successMsg" style="display:none;margin-top:12px" class="success">
-        Thanks — your request is received. Check your email for next steps.
+        Thanks — your request is received. Check your email for next steps. (This demo stores data locally only.)
       </div>
     </div>
   </div>
 
   <script>
+    // Minimal JS: modal + fake lead capture (localStorage). Keep client-side for demo.
     const modalBack = document.getElementById('modalBack');
     const leadForm = document.getElementById('leadForm');
     const successMsg = document.getElementById('successMsg');
@@ -271,34 +338,44 @@
     }
 
     leadForm.addEventListener('submit', async function(e){
-      e.preventDefault();
-      const formData = new FormData(leadForm);
-      const selectedPlan = formData.get("plan");
-      try {
-        let res = await fetch("https://formspree.io/f/xqadjppk", {
-          method: "POST",
-          body: formData,
-          headers: { "Accept": "application/json" }
-        });
-        if (res.ok) {
-          successMsg.style.display = 'block';
-          setTimeout(() => {
-            if (selectedPlan.toLowerCase().includes("practice")) {
-              window.location.href = "thankyou.html?plan=practice";
-            } else if (selectedPlan.toLowerCase().includes("starter")) {
-              window.location.href = "payment.html?plan=starter&step=payment";
-            } else if (selectedPlan.toLowerCase().includes("pro")) {
-              window.location.href = "payment.html?plan=pro&step=payment";
-            }
-          }, 1000);
-        } else {
-          const errText = await res.text();
-          alert("Formspree error: " + errText);
-        }
-      } catch (err) {
-        alert("Network error: " + err.message);
+    e.preventDefault();
+    const formData = new FormData(leadForm);
+    const selectedPlan = formData.get("plan");
+  
+    try {
+      let res = await fetch("https://formspree.io/f/xqadjppk", {
+        method: "POST",
+        body: formData,
+        headers: { "Accept": "application/json" }
+      });
+  
+      if (res.ok) {
+        // Success message (optional)
+        successMsg.style.display = 'block';
+  
+        // Wait 1s then redirect
+        setTimeout(() => {
+          if (selectedPlan.toLowerCase().includes("practice")) {
+            window.location.href = "thankyou.html?plan=practice";
+          } else if (selectedPlan.toLowerCase().includes("starter")) {
+            window.location.href = "payment.html?plan=starter&step=payment";
+          } else if (selectedPlan.toLowerCase().includes("pro")) {
+            window.location.href = "payment.html?plan=pro&step=payment";
+          }
+        }, 1000);
+  
+      } else {
+        const errText = await res.text();
+        alert("Formspree error: " + errText);
       }
-    });
+    } catch (err) {
+      alert("Network error: " + err.message);
+    }
+  });
+
+
   </script>
 </body>
 </html>
+
+
