@@ -129,23 +129,30 @@
       Please complete payment below:</p>
 
       <div class="method">
-        <h3>💳 Option 1: Binance Pay (Recommended)</h3>
-        <p>Send <strong>${usdt} USDT (TRC20)</strong> to:</p>
-        <code>TARagswXUf6JWFS3nTDpZ8nqRHs6TiANkL</code>
-        <p style="color:#f66; font-size:14px; margin-top:8px;">
-          ⚠️ Make sure to send only USDT via TRC20 network. Wrong networks may result in lost funds.
-        </p>
-      </div>
-
-      <div class="method">
-        <h3>💳 Option 2: Advcash</h3>
-        <p>Send <strong>${price}</strong> to this wallet:</p>
-        <code>THVLjBGEpk7SKaoocWQksR99hc2Ep4BMGt</code>
-      </div>
+      <h3>💳 Option 1: Binance Pay (Recommended)</h3>
+      <p>Send <strong>${usdt} USDT (TRC20)</strong> to:</p>
+      <code id="binanceAddress">TARagswXUf6JWFS3nTDpZ8nqRHs6TiANkL</code>
+      <button class="btn btn-confirm" onclick="copyAddress('binanceAddress')">📋 Copy Address</button>
+      <p style="color:#f66; font-size:14px; margin-top:8px;">
+        ⚠️ Make sure to send only USDT via TRC20 network. Wrong networks may result in lost funds.
+      </p>
+    </div>
+    
+    <div class="method">
+      <h3>💳 Option 2: Advcash</h3>
+      <p>Send <strong>${price}</strong> to this wallet:</p>
+      <code id="advcashAddress">THVLjBGEpk7SKaoocWQksR99hc2Ep4BMGt</code>
+      <button class="btn btn-confirm" onclick="copyAddress('advcashAddress')">📋 Copy Address</button>
 
       <button class="btn btn-confirm" onclick="markPaymentPending('${plan}', '${title}')">✅ I Have Paid</button>
       <small>After payment, keep your transaction ID (TXID) for verification.</small>
     `;
+  }
+  function copyAddress(elementId) {
+    const address = document.getElementById(elementId).innerText;
+    navigator.clipboard.writeText(address).then(() => {
+      alert("Wallet address copied: " + address);
+    });
   }
   // --- Verifying screen ---
   function verifyingScreen(title, email, plan) {
