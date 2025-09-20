@@ -108,6 +108,26 @@
     .faq dd{margin:6px 0 0;color:var(--muted);margin-bottom:8px}
 
     footer{margin-top:36px;text-align:center;color:var(--muted);font-size:13px}
+     .arrow-btn{
+      position:absolute;
+      top:50%;
+      transform:translateY(-50%);
+      background:var(--accent);
+      color:#071012;
+      border:none;
+      padding:10px 12px;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:20px;
+      box-shadow:0 6px 18px rgba(0,0,0,0.35);
+    }
+    .arrow-btn:hover{ background:#f0d65c; }
+    .arrow-btn.left{ left:-48px; }
+    .arrow-btn.right{ right:-48px; }
+    @media (max-width:720px){
+      .arrow-btn.left{ left:6px; }
+      .arrow-btn.right{ right:6px; }
+    }
 
     /* Modal */
     .modal-back{position:fixed;inset:0;background:rgba(2,6,8,0.6);display:none;align-items:center;justify-content:center;padding:18px}
@@ -270,24 +290,27 @@
           <div class="by">— R. Chen, Singapore — Live Starter</div>
         </div>
       </section>
-      <!-- 🔥 NEW Results section -->
-      <section id="results" class="card" style="margin-top:28px;text-align:center">
+      <!-- RESULTS SECTION (place below Testimonials) -->
+      <section id="results" class="card" style="margin-top:28px;text-align:center;position:relative">
         <h3>📸 RAVA Live Testing Results</h3>
-        <div style="position:relative;display:inline-block">
-          <img id="ravaSlide" src="images/Rava 1.jfif" alt="Rava 1"
-               style="max-width:100%;height:auto;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.4)">
-          <button onclick="prevSlide()" 
-                  style="position:absolute;top:50%;left:-40px;transform:translateY(-50%);
-                         background:var(--accent);color:#071012;border:none;padding:8px 12px;
-                         border-radius:8px;cursor:pointer;font-weight:700">⬅️</button>
-          <button onclick="nextSlide()" 
-                  style="position:absolute;top:50%;right:-40px;transform:translateY(-50%);
-                         background:var(--accent);color:#071012;border:none;padding:8px 12px;
-                         border-radius:8px;cursor:pointer;font-weight:700">➡️</button>
+      
+        <div style="position:relative;display:inline-block;max-width:780px;width:100%;">
+          <img id="ravaSlide"
+               src=""
+               alt="RAVA screenshot"
+               style="width:100%;height:auto;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,0.4)">
+          <button onclick="prevSlide()" class="arrow-btn left" aria-label="Previous">❮</button>
+          <button onclick="nextSlide()" class="arrow-btn right" aria-label="Next">❯</button>
         </div>
-        <p class="small" style="margin-top:10px;color:#f77;">
-          ⚠️ Past results do not guarantee future profits. Trading is risky.
-        </p>
+      
+        <div id="results-note" style="margin-top:10px;">
+          <p class="small" style="margin:0;color:#f77;">
+            ⚠️ Past results do not guarantee future profits. Trading is risky.
+          </p>
+        </div>
+      
+        <!-- Optional diagnostic output (hidden by default) -->
+        <div id="results-diagnostics" style="margin-top:12px;display:none;color:var(--muted);font-size:13px"></div>
       </section>
 
       <section id="faq" class="faq">
@@ -355,22 +378,99 @@
   </div>
 
   <script>
-    let current = 1;
-    const total = 34; // number of screenshots
+    // CONFIG
+    const totalSlides = 34;              // number of images you have
+    const folder = 'images';             // path relative to this HTML
+    const filenameBase = 'Rava ';        // note: includes space before number (matches your filenames)
+    const ext = '.jfif';                 // your extension (case-sensitive on some hosts)
   
+    let current = 1;
+    const imgEl = document.getElementById('ravaSlide');
+  
+    // return encoded URL (handles spaces)
+    function imageUrl(num){
+      return encodeURI(`${folder}/${filenameBase}${num}${ext}`);
+    }
+  
+    // inline SVG placeholder (no extra file needed)
+    function svgPlaceholder(text){
+      const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='700'>
+        <rect width='100%' height='100%' fill='#0f1415'/>
+        <text x='50%' y='46%' fill='#d4af37' font-family='Inter, Arial' font-size='26' text-anchor='middle'>${text}</text>
+        <text x='50%' y='60%' fill='#9aa2a6' font-family='Inter, Arial' font-size='16' text-anchor='middle'>Check console/network tab for 404s</text>
+      </svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+  
+    // show a single slide with robust onerror handling
     function showSlide(num){
-      document.getElementById("ravaSlide").src = `images/Rava ${num}.jfif`;
+      current = num;
+      const url = imageUrl(num);
+  
+      // set temporary alt while loading
+      imgEl.alt = `RAVA screenshot ${num}`;
+      imgEl.onload = () => {
+        // success: optionally clear diagnostics message
+        document.getElementById('results-diagnostics').style.display = 'none';
+      };
+      imgEl.onerror = () => {
+        console.warn(`RAVA image missing or failed: ${url}`);
+        // fallback svg that includes the missing number
+        imgEl.src = svgPlaceholder(`Image not found: ${filenameBase}${num}${ext}`);
+        // show a visible diagnostic
+        const diag = document.getElementById('results-diagnostics');
+        diag.style.display = 'block';
+        diag.innerText = `Missing image: ${filenameBase}${num}${ext} — open DevTools (Network) to inspect the request.`;
+      };
+  
+      // trigger load
+      imgEl.src = url;
     }
   
     function nextSlide(){
-      current = current >= total ? 1 : current + 1;
+      current = current >= totalSlides ? 1 : current + 1;
+      showSlide(current);
+    }
+    function prevSlide(){
+      current = current <= 1 ? totalSlides : current - 1;
       showSlide(current);
     }
   
-    function prevSlide(){
-      current = current <= 1 ? total : current - 1;
-      showSlide(current);
+    // Optional diagnostic: preload all images and list missing ones (runs once)
+    async function diagnoseAll(){
+      const missing = [];
+      // show loader text
+      const diag = document.getElementById('results-diagnostics');
+      diag.style.display = 'block';
+      diag.innerText = 'Checking images... (this may take a few seconds)';
+  
+      // Preload via Image object to detect onerror (no CORS issues for same origin)
+      for (let i = 1; i <= totalSlides; i++){
+        // eslint-disable-next-line no-await-in-loop
+        await new Promise(resolve => {
+          const test = new Image();
+          test.onload = () => resolve();
+          test.onerror = () => { missing.push(i); resolve(); };
+          test.src = imageUrl(i) + `?v=${Date.now()}`; // cache-bust to force request
+        });
+      }
+  
+      if (missing.length === 0){
+        diag.innerText = `All ${totalSlides} images found.`;
+        setTimeout(()=> diag.style.display = 'none', 2000);
+      } else {
+        diag.innerHTML = `Missing images: ${missing.map(n => `${filenameBase}${n}${ext}`).join(', ')}. <br>Open DevTools → Network tab to see requests (404/403).`;
+        console.warn('Missing images:', missing);
+      }
     }
+  
+    // init: show the first slide; run quick diagnose in background
+    showSlide(1);
+    // run diagnostic after brief delay (non-blocking)
+    setTimeout(diagnoseAll, 600);
+  
+    // Helpful note in console for debugging
+    console.info('Carousel initialized. If images do not load, check that files are uploaded to:', folder, 'and that filenames/casing match exactly.');
     // Minimal JS: modal + fake lead capture (localStorage). Keep client-side for demo.
     const modalBack = document.getElementById('modalBack');
     const leadForm = document.getElementById('leadForm');
@@ -429,6 +529,7 @@
   </script>
 </body>
 </html>
+
 
 
 
