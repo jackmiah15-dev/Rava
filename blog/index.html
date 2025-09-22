@@ -3,33 +3,35 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Rava AI Trader Blog</title>
+  <title>Rava Blog - Insights & Case Studies</title>
   <link rel="stylesheet" href="../style.css">
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f9f9f9; }
-    .container { max-width: 900px; margin: auto; padding: 2rem; }
-    h1 { text-align: center; }
-    .blog-list { display: grid; gap: 1.5rem; margin-top: 2rem; }
-    .blog-card { background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .blog-card h2 { margin-top: 0; }
-    .btn { display: inline-block; margin-top: 1rem; background: #0077ff; color: #fff; padding: 0.5rem 1rem; border-radius: 4px; text-decoration: none; }
-    .btn:hover { background: #005fcc; }
+    body { background: #111; color: #fff; font-family: Arial, sans-serif; }
+    .container { max-width: 1000px; margin: auto; padding: 2rem; }
+    h1 { text-align: center; color: gold; margin-bottom: 2rem; }
+    .blog-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+    .blog-card { background: #1a1a1a; border: 1px solid gold; border-radius: 10px; overflow: hidden; box-shadow: 0 0 10px rgba(255,215,0,0.3); }
+    .blog-card img { width: 100%; height: 180px; object-fit: cover; }
+    .blog-card h2 { color: gold; padding: 1rem; font-size: 1.3rem; }
+    .blog-card p { padding: 0 1rem; color: #ddd; }
+    .btn { display: inline-block; margin: 1rem; padding: 0.6rem 1rem; background: gold; color: black; border-radius: 5px; text-decoration: none; font-weight: bold; }
+    .btn:hover { background: #ffcc00; }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>📚 Rava Insights & Results</h1>
-    <p style="text-align:center;">Trading insights, case studies, and structured results.</p>
-
-    <div class="blog-list">
-      <!-- First Blog Post -->
-      <article class="blog-card">
-        <h2><a href="post1.html">🚀 How I Grew $1,000 Into $1,500 in Just 5 Days</a></h2>
-        <p>Small consistent wins, structured sessions, and AI support — the full breakdown of my disciplined $1k → $1.5k journey.</p>
+    <h1>📚 Rava Insights & Case Studies</h1>
+    <div class="blog-grid">
+      
+      <!-- Post 1 -->
+      <div class="blog-card">
+        <img src="../images/rava1.jpg" alt="Trading Results">
+        <h2>🚀 How I Grew $1,000 Into $1,500 in Just 5 Days</h2>
+        <p>Small, consistent wins with Rava AI Trader: $20/session × 5 sessions/day = $500/week...</p>
         <a href="post1.html" class="btn">Read More</a>
-      </article>
-
-      <!-- Future blog posts go here -->
+      </div>
+      
+      <!-- Future posts: duplicate block above -->
     </div>
   </div>
 </body>
