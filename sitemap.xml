@@ -61,6 +61,18 @@
       <image:caption>How I Grew $1,000 Into $1,500 in 5 Days</image:caption>
     </image:image>
   </url>
+   <!--  Blog Post 2  -->
+  <url>
+    <loc>https://rava-ai-trader.netlify.app/blog/post2.html</loc>
+    <lastmod>2025-09-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <image:image>
+       <image:loc>https://rava-ai-trader.netlify.app/images/Rava2.jpg</image:loc>
+       <image:caption>My Exact 1-Hour Trading Routine with Rava AI</image:caption>
+    </image:image>
+  </url>
+
 
 
   <!-- Image gallery (replace numbers with how many you uploaded) -->
