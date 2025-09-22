@@ -1,29 +1,193 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 
+  <!-- Homepage -->
   <url>
     <loc>https://rava-ai-trader.netlify.app/</loc>
+    <lastmod>2025-09-20</lastmod>
+    <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/rava_logo.jpg</image:loc>
+      <image:caption>RAVA AI Trader Logo</image:caption>
+    </image:image>
   </url>
 
+  <!-- Pages -->
   <url>
     <loc>https://rava-ai-trader.netlify.app/form.html</loc>
-    <priority>0.9</priority>
+    <lastmod>2025-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
 
   <url>
     <loc>https://rava-ai-trader.netlify.app/payment.html</loc>
-    <priority>0.9</priority>
-  </url>
-
-  <url>
-    <loc>https://rava-ai-trader.netlify.app/thankyou.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
 
   <url>
+    <loc>https://rava-ai-trader.netlify.app/thankyou.html</loc>
+    <lastmod>2025-09-20</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
     <loc>https://rava-ai-trader.netlify.app/dashboard.html</loc>
-    <priority>0.7</priority>
+    <lastmod>2025-09-20</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
+  <!-- Image gallery (replace numbers with how many you uploaded) -->
+  <url>
+    <loc>https://rava-ai-trader.netlify.app/</loc>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava1.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 1</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava2.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 2</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava3.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 3</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava4.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 4</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava5.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 5</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava6.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 6</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava3.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 3</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava7.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 7</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava8.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 8</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava9.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 9</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava10.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 10</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava11.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 11</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava12.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 12</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava13.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 13</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava14.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 14</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava15.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 15</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava16.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 16</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava17.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 17</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava18.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 18</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava19.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 19</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava20.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 20</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava21.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 21</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava22.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 22</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava23.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 23</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava24.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 24</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava25.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 25</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava26.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 26</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava27.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 27</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava28.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 28</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava29.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 29</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava30.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 30</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava31.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 31</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava32.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 32</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava33.jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 33</image:caption>
+    </image:image>
+    <image:image>
+      <image:loc>https://rava-ai-trader.netlify.app/Rava34jpg</image:loc>
+      <image:caption>RAVA AI trading result screenshot 34</image:caption>
+    </image:image>
+    
+    
   </url>
 
 </urlset>
